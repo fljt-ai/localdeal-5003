@@ -1,0 +1,14 @@
+* text=auto
+*.py text eol=lf
+*.sql text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.svg text eol=lf
+*.command text eol=lf
+*.jpg binary
+*.png binary
+# Preserve plotting-tool output without whitespace-only review noise.
+evaluation/results/**/*.svg -whitespace linguist-generated=true

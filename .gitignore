@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+# Local SQLite data (including accounts, session records and exports).
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+# Local configuration and development output.
+.env
+.env.*
+.venv/
+venv/
+node_modules/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+localdeal-export-*.json
+.DS_Store
