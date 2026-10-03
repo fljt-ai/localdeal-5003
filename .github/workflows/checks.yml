@@ -1,0 +1,50 @@
+name: Project checks
+
+'on':
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  database-and-api:
+    name: Database and HTTP / Python ${{ matrix.python }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.14']
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Database constraints and transactions
+        run: python -B -m unittest discover -s database/tests -v
+      - name: Authentication, authorization and paginated HTTP
+        run: python -B -m unittest discover -s tests -v
+
+  frontend:
+    name: Frontend behavior / Node 22
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: JavaScript syntax
+        run: |
+          node --check frontend/src/http-api.js
+          node --check frontend/src/app.js
+      - name: HTTP adapter and asynchronous UI state
+        run: |
+          node frontend/tests/http-api.test.js
+          node frontend/tests/app-state.test.js
