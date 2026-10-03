@@ -1,0 +1,1 @@
+"""LocalDeal local coursework backend."""
