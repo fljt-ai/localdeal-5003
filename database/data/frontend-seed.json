@@ -1,0 +1,694 @@
+{
+  "metadata": {
+    "app": "LocalDeal",
+    "schemaVersion": 1,
+    "exportedAt": "2026-10-02T04:00:00.000Z",
+    "storage": "isolated-memory",
+    "mock": true,
+    "note": "前端本地演示数据；不代表真实身份验证、付款或商户核销。",
+    "source": "localdeal-frontend/src/mock-api.js",
+    "extraction": "Fresh isolated Node VM using exportData(); no live browser data",
+    "referenceDate": "2026-10-02",
+    "timezone": "Asia/Hong_Kong",
+    "currency": "HKD",
+    "defaultUserId": "u-demo"
+  },
+  "stores": [
+    {
+      "id": "s1",
+      "name": "Harbor Bites · 中环店",
+      "englishName": "Harbor Bites Central",
+      "category": "西式餐厅",
+      "district": "中环",
+      "address": "中环苏豪区士丹顿街 28 号地下",
+      "hours": "周一至周日 11:30–22:00",
+      "description": "在苏豪街角享受手工汉堡、香脆薯条和轻松午后。现点现做的牛肉汉堡，是朋友聚餐的小确幸。",
+      "pricePerPerson": 160,
+      "image": "assets/burger.jpg",
+      "tags": [
+        "手工汉堡",
+        "朋友聚餐",
+        "素食选择"
+      ],
+      "menu": [
+        {
+          "id": "m-s1-1",
+          "name": "招牌芝士牛肉汉堡",
+          "description": "烤牛肉饼、车打芝士与自制酱汁",
+          "price": 128
+        },
+        {
+          "id": "m-s1-2",
+          "name": "松露薯条",
+          "description": "金黄薯条配松露香与帕尔马芝士",
+          "price": 58
+        },
+        {
+          "id": "m-s1-3",
+          "name": "柠檬气泡饮",
+          "description": "新鲜柠檬与清爽气泡水",
+          "price": 42
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Harbor Bites · 尖沙咀店",
+      "englishName": "Harbor Bites Tsim Sha Tsui",
+      "category": "西式餐厅",
+      "district": "尖沙咀",
+      "address": "尖沙咀加连威老道 18 号地下",
+      "hours": "周一至周日 12:00–22:30",
+      "description": "逛街后的一份热腾腾汉堡，搭配冰凉饮品。舒适卡座与明亮空间，让午餐和晚餐都多一点自在。",
+      "pricePerPerson": 150,
+      "image": "assets/burger.jpg",
+      "tags": [
+        "手工汉堡",
+        "休闲晚餐",
+        "近港铁"
+      ],
+      "menu": [
+        {
+          "id": "m-s2-1",
+          "name": "烟熏培根汉堡",
+          "description": "牛肉饼、香脆培根与烟熏酱",
+          "price": 118
+        },
+        {
+          "id": "m-s2-2",
+          "name": "海盐薯条",
+          "description": "外脆内软，简单好吃",
+          "price": 48
+        },
+        {
+          "id": "m-s2-3",
+          "name": "莓果冰茶",
+          "description": "红茶与莓果的酸甜组合",
+          "price": 38
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "name": "Little Dumpling · 铜锣湾店",
+      "englishName": "Little Dumpling Causeway Bay",
+      "category": "亚洲料理",
+      "district": "铜锣湾",
+      "address": "铜锣湾渣甸坊 12 号一楼",
+      "hours": "周一至周日 11:00–21:30",
+      "description": "每日手包的小笼包与饺子，配上一碗暖心汤面。用熟悉的亚洲风味，为忙碌一天补充好心情。",
+      "pricePerPerson": 130,
+      "image": "assets/dumplings.jpg",
+      "tags": [
+        "手工饺子",
+        "暖心汤面",
+        "家庭聚餐"
+      ],
+      "menu": [
+        {
+          "id": "m-s3-1",
+          "name": "鲜肉小笼包（六只）",
+          "description": "薄皮包裹鲜肉与香浓汤汁",
+          "price": 68
+        },
+        {
+          "id": "m-s3-2",
+          "name": "香菇鲜蔬蒸饺（六只）",
+          "description": "香菇、椰菜与清甜时蔬",
+          "price": 58
+        },
+        {
+          "id": "m-s3-3",
+          "name": "招牌牛肉汤面",
+          "description": "慢炖牛肉与清香汤底",
+          "price": 88
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "name": "Little Dumpling · 中环店",
+      "englishName": "Little Dumpling Central",
+      "category": "亚洲料理",
+      "district": "中环",
+      "address": "中环威灵顿街 56 号地下",
+      "hours": "周一至周六 11:00–21:00；周日 12:00–20:00",
+      "description": "工作日午餐的温暖小站。手工蒸饺、红油抄手与清爽小菜，适合独自吃饭，也适合与同事分享。",
+      "pricePerPerson": 120,
+      "image": "assets/dumplings.jpg",
+      "tags": [
+        "手工饺子",
+        "午餐精选",
+        "可选辣度"
+      ],
+      "menu": [
+        {
+          "id": "m-s4-1",
+          "name": "鲜肉小笼包（六只）",
+          "description": "每日手包，热气腾腾上桌",
+          "price": 68
+        },
+        {
+          "id": "m-s4-2",
+          "name": "红油抄手（八只）",
+          "description": "香辣红油，可选择微辣",
+          "price": 62
+        },
+        {
+          "id": "m-s4-3",
+          "name": "葱油拌面",
+          "description": "慢熬葱油与弹牙面条",
+          "price": 58
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "name": "Daily Grind · 尖沙咀店",
+      "englishName": "Daily Grind Tsim Sha Tsui",
+      "category": "咖啡烘焙",
+      "district": "尖沙咀",
+      "address": "尖沙咀棉登径 8 号地下",
+      "hours": "周一至周日 08:00–19:00",
+      "description": "一杯精品咖啡、一块新鲜烘焙的牛角包。柔和灯光与窗边座位，是城市中短暂放慢步调的地方。",
+      "pricePerPerson": 90,
+      "image": "assets/coffee.jpg",
+      "tags": [
+        "精品咖啡",
+        "每日烘焙",
+        "窗边座位"
+      ],
+      "menu": [
+        {
+          "id": "m-s5-1",
+          "name": "燕麦拿铁",
+          "description": "双份浓缩与顺滑燕麦奶",
+          "price": 48
+        },
+        {
+          "id": "m-s5-2",
+          "name": "法式牛角包",
+          "description": "每日烘焙，酥脆奶油香",
+          "price": 32
+        },
+        {
+          "id": "m-s5-3",
+          "name": "巴斯克芝士蛋糕",
+          "description": "焦香表层与绵密芝士",
+          "price": 48
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "name": "Daily Grind · 铜锣湾店",
+      "englishName": "Daily Grind Causeway Bay",
+      "category": "咖啡烘焙",
+      "district": "铜锣湾",
+      "address": "铜锣湾希云街 20 号地下",
+      "hours": "周一至周日 08:30–20:00",
+      "description": "藏在街角的咖啡香。精选咖啡豆、当日出炉的甜点和轻盈三明治，陪你开始清晨或度过悠闲下午。",
+      "pricePerPerson": 85,
+      "image": "assets/coffee.jpg",
+      "tags": [
+        "精品咖啡",
+        "下午茶",
+        "植物奶选择"
+      ],
+      "menu": [
+        {
+          "id": "m-s6-1",
+          "name": "冰美式",
+          "description": "双份浓缩，清爽回甘",
+          "price": 36
+        },
+        {
+          "id": "m-s6-2",
+          "name": "杏仁牛角包",
+          "description": "杏仁馅与酥脆烘焙外皮",
+          "price": 38
+        },
+        {
+          "id": "m-s6-3",
+          "name": "鸡肉酸种三明治",
+          "description": "烤鸡肉、时蔬与酸种面包",
+          "price": 62
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "u-demo",
+      "name": "Alex",
+      "email": "alex@example.com"
+    },
+    {
+      "id": "u-amy",
+      "name": "Amy",
+      "email": "amy@example.com"
+    },
+    {
+      "id": "u-ming",
+      "name": "阿明",
+      "email": "ming@example.com"
+    },
+    {
+      "id": "u-joyce",
+      "name": "Joyce",
+      "email": "joyce@example.com"
+    },
+    {
+      "id": "u-ken",
+      "name": "Ken",
+      "email": "ken@example.com"
+    },
+    {
+      "id": "u-wai",
+      "name": "阿慧",
+      "email": "wai@example.com"
+    }
+  ],
+  "coupons": [
+    {
+      "id": "c1",
+      "storeId": "s1",
+      "title": "双人手工汉堡套餐",
+      "description": "两份招牌芝士牛肉汉堡、松露薯条及两杯指定饮品。",
+      "originalPrice": 338,
+      "price": 208,
+      "stock": 30,
+      "expiresAt": "2026-11-16",
+      "terms": [
+        "仅限对应门店使用，不适用于其他分店。",
+        "到店后出示券码，由店员核销；每张券仅可使用一次。",
+        "有效期内营业时间可用，建议提前联系门店确认座位。",
+        "本演示不收取费用，购买和核销仅在此浏览器中模拟。"
+      ]
+    },
+    {
+      "id": "c2",
+      "storeId": "s2",
+      "title": "双人烟熏汉堡套餐",
+      "description": "两份烟熏培根汉堡、海盐薯条及两杯莓果冰茶。",
+      "originalPrice": 318,
+      "price": 198,
+      "stock": 24,
+      "expiresAt": "2026-11-16",
+      "terms": [
+        "仅限对应门店使用，不适用于其他分店。",
+        "到店后出示券码，由店员核销；每张券仅可使用一次。",
+        "有效期内营业时间可用，建议提前联系门店确认座位。",
+        "本演示不收取费用，购买和核销仅在此浏览器中模拟。"
+      ]
+    },
+    {
+      "id": "c3",
+      "storeId": "s3",
+      "title": "双人暖心蒸饺套餐",
+      "description": "鲜肉小笼包、鲜蔬蒸饺、牛肉汤面及两杯热茶。",
+      "originalPrice": 238,
+      "price": 148,
+      "stock": 42,
+      "expiresAt": "2026-11-16",
+      "terms": [
+        "仅限对应门店使用，不适用于其他分店。",
+        "到店后出示券码，由店员核销；每张券仅可使用一次。",
+        "有效期内营业时间可用，建议提前联系门店确认座位。",
+        "本演示不收取费用，购买和核销仅在此浏览器中模拟。"
+      ]
+    },
+    {
+      "id": "c4",
+      "storeId": "s4",
+      "title": "双人饺子拌面套餐",
+      "description": "鲜肉小笼包、红油抄手、两份葱油拌面及热茶。",
+      "originalPrice": 258,
+      "price": 158,
+      "stock": 35,
+      "expiresAt": "2026-11-16",
+      "terms": [
+        "仅限对应门店使用，不适用于其他分店。",
+        "到店后出示券码，由店员核销；每张券仅可使用一次。",
+        "有效期内营业时间可用，建议提前联系门店确认座位。",
+        "本演示不收取费用，购买和核销仅在此浏览器中模拟。"
+      ]
+    },
+    {
+      "id": "c5",
+      "storeId": "s5",
+      "title": "双人咖啡甜点时光",
+      "description": "两杯指定咖啡、法式牛角包及一份芝士蛋糕。",
+      "originalPrice": 176,
+      "price": 108,
+      "stock": 20,
+      "expiresAt": "2026-11-16",
+      "terms": [
+        "仅限对应门店使用，不适用于其他分店。",
+        "到店后出示券码，由店员核销；每张券仅可使用一次。",
+        "有效期内营业时间可用，建议提前联系门店确认座位。",
+        "本演示不收取费用，购买和核销仅在此浏览器中模拟。"
+      ]
+    },
+    {
+      "id": "c6",
+      "storeId": "s6",
+      "title": "咖啡与烘焙双人套餐",
+      "description": "两杯指定咖啡及两份杏仁牛角包，享受街角下午茶。",
+      "originalPrice": 148,
+      "price": 88,
+      "stock": 28,
+      "expiresAt": "2026-11-16",
+      "terms": [
+        "仅限对应门店使用，不适用于其他分店。",
+        "到店后出示券码，由店员核销；每张券仅可使用一次。",
+        "有效期内营业时间可用，建议提前联系门店确认座位。",
+        "本演示不收取费用，购买和核销仅在此浏览器中模拟。"
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "id": "r-s1-1",
+      "storeId": "s1",
+      "userId": "u-demo",
+      "userName": "Alex",
+      "rating": 5,
+      "comment": "汉堡现做又多汁，松露薯条很香，和朋友吃得很满足。",
+      "createdAt": "2026-10-01T04:00:00.000Z"
+    },
+    {
+      "id": "r-s1-2",
+      "storeId": "s1",
+      "userId": "u-amy",
+      "userName": "Amy",
+      "rating": 5,
+      "comment": "午餐套餐很划算，店员也很友善，下次会再来。",
+      "createdAt": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "id": "r-s1-3",
+      "storeId": "s1",
+      "userId": "u-ming",
+      "userName": "阿明",
+      "rating": 4,
+      "comment": "芝士牛肉汉堡好吃，午饭时间稍微等了一会。",
+      "createdAt": "2026-09-27T04:00:00.000Z"
+    },
+    {
+      "id": "r-s1-4",
+      "storeId": "s1",
+      "userId": "u-joyce",
+      "userName": "Joyce",
+      "rating": 5,
+      "comment": "环境舒服，饮品清爽，适合逛苏豪时休息。",
+      "createdAt": "2026-09-24T04:00:00.000Z"
+    },
+    {
+      "id": "r-s1-5",
+      "storeId": "s1",
+      "userId": "u-ken",
+      "userName": "Ken",
+      "rating": 4,
+      "comment": "份量充足，薯条上桌很热，建议提前订位。",
+      "createdAt": "2026-09-20T04:00:00.000Z"
+    },
+    {
+      "id": "r-s2-1",
+      "storeId": "s2",
+      "userId": "u-amy",
+      "userName": "Amy",
+      "rating": 4,
+      "comment": "逛街后过来很方便，烟熏培根的味道不错。",
+      "createdAt": "2026-10-01T04:00:00.000Z"
+    },
+    {
+      "id": "r-s2-2",
+      "storeId": "s2",
+      "userId": "u-ming",
+      "userName": "阿明",
+      "rating": 5,
+      "comment": "汉堡面包柔软，牛肉口感很好，值得再来。",
+      "createdAt": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "id": "r-s2-3",
+      "storeId": "s2",
+      "userId": "u-joyce",
+      "userName": "Joyce",
+      "rating": 4,
+      "comment": "饮品和薯条都不错，晚餐时店内比较热闹。",
+      "createdAt": "2026-09-27T04:00:00.000Z"
+    },
+    {
+      "id": "r-s2-4",
+      "storeId": "s2",
+      "userId": "u-ken",
+      "userName": "Ken",
+      "rating": 4,
+      "comment": "套餐很适合两个人，服务速度也可以。",
+      "createdAt": "2026-09-24T04:00:00.000Z"
+    },
+    {
+      "id": "r-s2-5",
+      "storeId": "s2",
+      "userId": "u-wai",
+      "userName": "阿慧",
+      "rating": 5,
+      "comment": "卡座舒服，朋友很喜欢这里的莓果冰茶。",
+      "createdAt": "2026-09-20T04:00:00.000Z"
+    },
+    {
+      "id": "r-s3-1",
+      "storeId": "s3",
+      "userId": "u-demo",
+      "userName": "Alex",
+      "rating": 5,
+      "comment": "小笼包汤汁丰富，牛肉汤面也很暖胃。",
+      "createdAt": "2026-10-01T04:00:00.000Z"
+    },
+    {
+      "id": "r-s3-2",
+      "storeId": "s3",
+      "userId": "u-amy",
+      "userName": "Amy",
+      "rating": 5,
+      "comment": "蒸饺现做，皮薄馅足，和家人一起吃很开心。",
+      "createdAt": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "id": "r-s3-3",
+      "storeId": "s3",
+      "userId": "u-ming",
+      "userName": "阿明",
+      "rating": 4,
+      "comment": "小笼包味道好，汤面份量很足。",
+      "createdAt": "2026-09-27T04:00:00.000Z"
+    },
+    {
+      "id": "r-s3-4",
+      "storeId": "s3",
+      "userId": "u-joyce",
+      "userName": "Joyce",
+      "rating": 5,
+      "comment": "鲜蔬饺子清甜，店员仔细介绍了套餐。",
+      "createdAt": "2026-09-24T04:00:00.000Z"
+    },
+    {
+      "id": "r-s3-5",
+      "storeId": "s3",
+      "userId": "u-wai",
+      "userName": "阿慧",
+      "rating": 4,
+      "comment": "价钱合理，座位略紧凑但整体体验不错。",
+      "createdAt": "2026-09-20T04:00:00.000Z"
+    },
+    {
+      "id": "r-s4-1",
+      "storeId": "s4",
+      "userId": "u-amy",
+      "userName": "Amy",
+      "rating": 4,
+      "comment": "午餐来得很快，葱油拌面香气很好。",
+      "createdAt": "2026-10-01T04:00:00.000Z"
+    },
+    {
+      "id": "r-s4-2",
+      "storeId": "s4",
+      "userId": "u-ming",
+      "userName": "阿明",
+      "rating": 5,
+      "comment": "抄手辣度刚好，小笼包每一只都很饱满。",
+      "createdAt": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "id": "r-s4-3",
+      "storeId": "s4",
+      "userId": "u-joyce",
+      "userName": "Joyce",
+      "rating": 4,
+      "comment": "上班附近很方便，套餐份量适合两个人。",
+      "createdAt": "2026-09-27T04:00:00.000Z"
+    },
+    {
+      "id": "r-s4-4",
+      "storeId": "s4",
+      "userId": "u-ken",
+      "userName": "Ken",
+      "rating": 4,
+      "comment": "店内干净，午餐时段比较忙，早点去更舒服。",
+      "createdAt": "2026-09-24T04:00:00.000Z"
+    },
+    {
+      "id": "r-s4-5",
+      "storeId": "s4",
+      "userId": "u-wai",
+      "userName": "阿慧",
+      "rating": 5,
+      "comment": "微辣抄手特别好吃，配热茶很舒服。",
+      "createdAt": "2026-09-20T04:00:00.000Z"
+    },
+    {
+      "id": "r-s5-1",
+      "storeId": "s5",
+      "userId": "u-amy",
+      "userName": "Amy",
+      "rating": 5,
+      "comment": "窗边座位很舒服，拿铁和牛角包都很喜欢。",
+      "createdAt": "2026-10-01T04:00:00.000Z"
+    },
+    {
+      "id": "r-s5-2",
+      "storeId": "s5",
+      "userId": "u-ming",
+      "userName": "阿明",
+      "rating": 4,
+      "comment": "咖啡豆香气不错，甜点不会太甜。",
+      "createdAt": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "id": "r-s5-3",
+      "storeId": "s5",
+      "userId": "u-joyce",
+      "userName": "Joyce",
+      "rating": 5,
+      "comment": "牛角包很酥脆，下午和朋友坐坐很合适。",
+      "createdAt": "2026-09-27T04:00:00.000Z"
+    },
+    {
+      "id": "r-s5-4",
+      "storeId": "s5",
+      "userId": "u-ken",
+      "userName": "Ken",
+      "rating": 4,
+      "comment": "芝士蛋糕绵密，店里气氛安静。",
+      "createdAt": "2026-09-24T04:00:00.000Z"
+    },
+    {
+      "id": "r-s5-5",
+      "storeId": "s5",
+      "userId": "u-wai",
+      "userName": "阿慧",
+      "rating": 5,
+      "comment": "燕麦拿铁顺滑，服务友善，会再来。",
+      "createdAt": "2026-09-20T04:00:00.000Z"
+    },
+    {
+      "id": "r-s6-1",
+      "storeId": "s6",
+      "userId": "u-amy",
+      "userName": "Amy",
+      "rating": 4,
+      "comment": "杏仁牛角包不错，逛街前来喝一杯很方便。",
+      "createdAt": "2026-10-01T04:00:00.000Z"
+    },
+    {
+      "id": "r-s6-2",
+      "storeId": "s6",
+      "userId": "u-ming",
+      "userName": "阿明",
+      "rating": 5,
+      "comment": "冰美式干净清爽，咖啡豆味道很合口味。",
+      "createdAt": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "id": "r-s6-3",
+      "storeId": "s6",
+      "userId": "u-joyce",
+      "userName": "Joyce",
+      "rating": 5,
+      "comment": "街角小店很有气氛，甜点出炉时很香。",
+      "createdAt": "2026-09-27T04:00:00.000Z"
+    },
+    {
+      "id": "r-s6-4",
+      "storeId": "s6",
+      "userId": "u-ken",
+      "userName": "Ken",
+      "rating": 4,
+      "comment": "鸡肉三明治份量不错，午后客人比较多。",
+      "createdAt": "2026-09-24T04:00:00.000Z"
+    },
+    {
+      "id": "r-s6-5",
+      "storeId": "s6",
+      "userId": "u-wai",
+      "userName": "阿慧",
+      "rating": 5,
+      "comment": "植物奶选择方便，店员推荐的拿铁很好喝。",
+      "createdAt": "2026-09-20T04:00:00.000Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "o-demo-1",
+      "userId": "u-demo",
+      "couponId": "c1",
+      "storeId": "s1",
+      "title": "双人手工汉堡套餐",
+      "price": 208,
+      "originalPrice": 338,
+      "code": "LD-HARBOR01",
+      "status": "unused",
+      "purchasedAt": "2026-09-30T04:00:00.000Z",
+      "expiresAt": "2026-11-16"
+    },
+    {
+      "id": "o-demo-2",
+      "userId": "u-demo",
+      "couponId": "c3",
+      "storeId": "s3",
+      "title": "双人暖心蒸饺套餐",
+      "price": 148,
+      "originalPrice": 238,
+      "code": "LD-DUMPLING02",
+      "status": "redeemed",
+      "purchasedAt": "2026-09-25T04:00:00.000Z",
+      "expiresAt": "2026-11-16",
+      "redeemedAt": "2026-09-29T04:00:00.000Z"
+    },
+    {
+      "id": "o-demo-3",
+      "userId": "u-demo",
+      "couponId": "c5",
+      "storeId": "s5",
+      "title": "双人咖啡甜点时光",
+      "price": 108,
+      "originalPrice": 176,
+      "code": "LD-COFFEE03",
+      "status": "unused",
+      "purchasedAt": "2026-08-31T04:00:00.000Z",
+      "expiresAt": "2026-10-01"
+    }
+  ],
+  "favorites": [
+    {
+      "userId": "u-demo",
+      "storeId": "s1"
+    },
+    {
+      "userId": "u-demo",
+      "storeId": "s5"
+    }
+  ]
+}
