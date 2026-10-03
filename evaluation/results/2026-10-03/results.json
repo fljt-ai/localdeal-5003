@@ -1,0 +1,3232 @@
+{
+  "measured_at_hk": "2026-10-03T01:19:37.610268+08:00",
+  "seed": 5003,
+  "repetitions": 30,
+  "environment": {
+    "python": "3.14.4",
+    "sqlite": "3.50.4",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "automatic_index": 1,
+    "cache_size_kib": 8192,
+    "mmap_size": 0
+  },
+  "scales": [
+    {
+      "scale": "small",
+      "counts": {
+        "users": 1000,
+        "merchants": 10,
+        "stores": 100,
+        "reviews": 5000,
+        "orders": 2000,
+        "redemptions": 400,
+        "coupons": 100,
+        "menu_items": 300
+      },
+      "dropped_business_indexes": [
+        "idx_coupons_store_expiry",
+        "idx_favorites_store",
+        "idx_merchants_owner",
+        "idx_orders_coupon",
+        "idx_orders_user_purchased",
+        "idx_redemptions_staff_time",
+        "idx_reviews_store_created",
+        "idx_reviews_user",
+        "idx_staff_user",
+        "idx_store_tags_tag",
+        "idx_stores_category",
+        "idx_stores_district_category",
+        "idx_stores_merchant"
+      ],
+      "storage_bytes": {
+        "baseline": 1703936,
+        "indexed": 2121728
+      },
+      "queries": [
+        {
+          "id": "reviews_hot",
+          "label": "Latest reviews: hot store",
+          "sql": "SELECT r.review_id,u.display_name,r.rating,r.comment FROM reviews r JOIN users u ON u.user_id=r.user_id WHERE r.store_id=? ORDER BY r.created_at DESC,r.review_id LIMIT 10",
+          "parameters": [
+            "b-s000000"
+          ],
+          "scope": "sample SQL, LIMIT 10; current review endpoint is not paginated",
+          "result_rows": 10,
+          "result_sha256": "b90263c210776161c786e8443a70e7c390eda540ea59cdfe7c01f800f6cd7706",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.111063,
+              "p95_ms": 0.1225,
+              "min_ms": 0.109958,
+              "max_ms": 0.123833,
+              "samples_ms": [
+                0.115625,
+                0.123833,
+                0.12225,
+                0.1215,
+                0.117667,
+                0.110792,
+                0.110791,
+                0.110292,
+                0.111292,
+                0.110083,
+                0.111417,
+                0.110292,
+                0.111291,
+                0.11075,
+                0.111166,
+                0.113291,
+                0.11025,
+                0.110833,
+                0.111333,
+                0.111209,
+                0.110542,
+                0.110458,
+                0.111042,
+                0.110459,
+                0.111084,
+                0.110541,
+                0.109958,
+                0.110792,
+                0.118125,
+                0.1225
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.008292,
+              "p95_ms": 0.0105,
+              "min_ms": 0.007959,
+              "max_ms": 0.011958,
+              "samples_ms": [
+                0.009708,
+                0.011958,
+                0.00925,
+                0.009291,
+                0.008416,
+                0.008416,
+                0.008375,
+                0.008125,
+                0.008458,
+                0.008292,
+                0.008292,
+                0.008417,
+                0.008042,
+                0.00825,
+                0.008292,
+                0.008042,
+                0.00825,
+                0.007959,
+                0.00825,
+                0.00825,
+                0.008,
+                0.008292,
+                0.008417,
+                0.00825,
+                0.008292,
+                0.008167,
+                0.008375,
+                0.008042,
+                0.0105,
+                0.008417
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 13.393994211287987,
+          "plans": {
+            "baseline": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 81,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              },
+              {
+                "id": 32,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 81,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reviews_regular",
+          "label": "Latest reviews: regular store",
+          "sql": "SELECT r.review_id,u.display_name,r.rating,r.comment FROM reviews r JOIN users u ON u.user_id=r.user_id WHERE r.store_id=? ORDER BY r.created_at DESC,r.review_id LIMIT 10",
+          "parameters": [
+            "b-s000001"
+          ],
+          "scope": "sample SQL, LIMIT 10; current review endpoint is not paginated",
+          "result_rows": 10,
+          "result_sha256": "c40b2f6f58914144be58905c8c99441309691e4d498ee38be38dd4002ce1f805",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.0178955,
+              "p95_ms": 0.019458,
+              "min_ms": 0.017667,
+              "max_ms": 0.025084,
+              "samples_ms": [
+                0.019458,
+                0.018458,
+                0.01825,
+                0.025084,
+                0.018166,
+                0.018084,
+                0.018041,
+                0.018292,
+                0.018708,
+                0.018,
+                0.017875,
+                0.017875,
+                0.017791,
+                0.017917,
+                0.017916,
+                0.017709,
+                0.01775,
+                0.017834,
+                0.017791,
+                0.017958,
+                0.017792,
+                0.017875,
+                0.017875,
+                0.017833,
+                0.017875,
+                0.017792,
+                0.017958,
+                0.017958,
+                0.017667,
+                0.017792
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.00825,
+              "p95_ms": 0.009542,
+              "min_ms": 0.007958,
+              "max_ms": 0.009958,
+              "samples_ms": [
+                0.008208,
+                0.0085,
+                0.008417,
+                0.008333,
+                0.008083,
+                0.00825,
+                0.00825,
+                0.009958,
+                0.009542,
+                0.008292,
+                0.00825,
+                0.008041,
+                0.008208,
+                0.008167,
+                0.008208,
+                0.008333,
+                0.008291,
+                0.008208,
+                0.007958,
+                0.008291,
+                0.008292,
+                0.008208,
+                0.008125,
+                0.008208,
+                0.00825,
+                0.00825,
+                0.00825,
+                0.008,
+                0.00825,
+                0.007958
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 2.169151515151515,
+          "plans": {
+            "baseline": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 81,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              },
+              {
+                "id": 32,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 81,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wallet_hot",
+          "label": "Wallet: frequent buyer",
+          "sql": "SELECT * FROM wallet WHERE user_id=? ORDER BY purchased_at DESC,order_id",
+          "parameters": [
+            "b-u000000"
+          ],
+          "scope": "current orders_for_user SQL; all matching orders fetched",
+          "result_rows": 200,
+          "result_sha256": "350b9e2b745928caa6f4f99f14f9061bb95483122b1b2fa7c38e927cf47d888d",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.246,
+              "p95_ms": 0.273833,
+              "min_ms": 0.240958,
+              "max_ms": 0.283625,
+              "samples_ms": [
+                0.242791,
+                0.283625,
+                0.26475,
+                0.273833,
+                0.268667,
+                0.247708,
+                0.263,
+                0.247667,
+                0.242583,
+                0.253958,
+                0.244208,
+                0.2445,
+                0.2455,
+                0.251291,
+                0.246,
+                0.251375,
+                0.262917,
+                0.246042,
+                0.245417,
+                0.244875,
+                0.248125,
+                0.240958,
+                0.250375,
+                0.245333,
+                0.244167,
+                0.242209,
+                0.241875,
+                0.246,
+                0.245541,
+                0.245166
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.2356035,
+              "p95_ms": 0.2615,
+              "min_ms": 0.227,
+              "max_ms": 0.263459,
+              "samples_ms": [
+                0.235416,
+                0.236791,
+                0.239375,
+                0.256541,
+                0.238583,
+                0.235791,
+                0.232041,
+                0.229416,
+                0.248833,
+                0.237959,
+                0.23475,
+                0.230041,
+                0.228834,
+                0.231416,
+                0.259708,
+                0.241375,
+                0.236334,
+                0.227583,
+                0.235,
+                0.227542,
+                0.263459,
+                0.229709,
+                0.2615,
+                0.236209,
+                0.231584,
+                0.238875,
+                0.238041,
+                0.231083,
+                0.232416,
+                0.227
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.04412710337495,
+          "plans": {
+            "baseline": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 44,
+                "detail": "SEARCH o USING INDEX sqlite_autoindex_orders_3 (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 38,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 68,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 44,
+                "detail": "SEARCH o USING INDEX idx_orders_user_purchased (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 38,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wallet_regular",
+          "label": "Wallet: regular buyer",
+          "sql": "SELECT * FROM wallet WHERE user_id=? ORDER BY purchased_at DESC,order_id",
+          "parameters": [
+            "b-u000999"
+          ],
+          "scope": "current orders_for_user SQL; all matching orders fetched",
+          "result_rows": 1,
+          "result_sha256": "b73d25001a711d8233b542413562ed41635b0f004ba91eff08b74a9064362410",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.0055,
+              "p95_ms": 0.005791,
+              "min_ms": 0.005417,
+              "max_ms": 0.006,
+              "samples_ms": [
+                0.006,
+                0.005625,
+                0.005584,
+                0.005625,
+                0.005584,
+                0.0055,
+                0.0055,
+                0.005542,
+                0.0055,
+                0.0055,
+                0.005583,
+                0.005459,
+                0.005542,
+                0.005791,
+                0.005542,
+                0.0055,
+                0.005458,
+                0.005459,
+                0.0055,
+                0.005791,
+                0.005542,
+                0.005417,
+                0.005417,
+                0.005459,
+                0.005459,
+                0.005458,
+                0.005458,
+                0.005458,
+                0.005541,
+                0.005417
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.005,
+              "p95_ms": 0.005167,
+              "min_ms": 0.004917,
+              "max_ms": 0.005291,
+              "samples_ms": [
+                0.005291,
+                0.005167,
+                0.005042,
+                0.005041,
+                0.005,
+                0.004958,
+                0.005041,
+                0.004959,
+                0.005084,
+                0.005,
+                0.005,
+                0.005042,
+                0.004958,
+                0.005125,
+                0.004959,
+                0.005041,
+                0.005042,
+                0.005,
+                0.005042,
+                0.005042,
+                0.004917,
+                0.004959,
+                0.005,
+                0.005,
+                0.004917,
+                0.005,
+                0.004959,
+                0.004958,
+                0.004958,
+                0.005
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.0999999999999999,
+          "plans": {
+            "baseline": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 44,
+                "detail": "SEARCH o USING INDEX sqlite_autoindex_orders_3 (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 38,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 68,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 44,
+                "detail": "SEARCH o USING INDEX idx_orders_user_purchased (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 38,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              }
+            ]
+          }
+        },
+        {
+          "id": "merchant",
+          "label": "Merchant branch ledger",
+          "sql": "SELECT w.* FROM wallet w JOIN store_staff ss ON ss.store_id=w.store_id WHERE ss.user_id=? AND ss.is_active=1 ORDER BY w.purchased_at DESC,w.order_id",
+          "parameters": [
+            "b-u000000"
+          ],
+          "scope": "current merchant_orders SQL; all matching branch orders fetched",
+          "result_rows": 200,
+          "result_sha256": "2651ca2f0888213137af82d6f47bbaace422ed9dfa6e805db7c048d0c6cbf412",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.5303960000000001,
+              "p95_ms": 0.5685,
+              "min_ms": 0.520959,
+              "max_ms": 0.584709,
+              "samples_ms": [
+                0.530375,
+                0.530417,
+                0.5685,
+                0.538,
+                0.525292,
+                0.538416,
+                0.532625,
+                0.527125,
+                0.526,
+                0.541292,
+                0.537334,
+                0.524792,
+                0.525042,
+                0.52975,
+                0.525541,
+                0.552833,
+                0.534916,
+                0.531625,
+                0.52225,
+                0.544458,
+                0.5515,
+                0.528667,
+                0.525875,
+                0.520959,
+                0.532042,
+                0.52925,
+                0.524083,
+                0.55525,
+                0.584709,
+                0.5275
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.2496875,
+              "p95_ms": 0.268375,
+              "min_ms": 0.243042,
+              "max_ms": 0.282541,
+              "samples_ms": [
+                0.251667,
+                0.251833,
+                0.247292,
+                0.268375,
+                0.258875,
+                0.249583,
+                0.250625,
+                0.2465,
+                0.247167,
+                0.247125,
+                0.246542,
+                0.248667,
+                0.247541,
+                0.250667,
+                0.248791,
+                0.265125,
+                0.261,
+                0.252292,
+                0.249792,
+                0.252083,
+                0.282541,
+                0.247083,
+                0.248333,
+                0.246,
+                0.245041,
+                0.244542,
+                0.243042,
+                0.25375,
+                0.267459,
+                0.253542
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 2.124239299123905,
+          "plans": {
+            "baseline": [
+              {
+                "id": 11,
+                "parent": 0,
+                "notused": 125,
+                "detail": "SCAN o"
+              },
+              {
+                "id": 13,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 19,
+                "parent": 0,
+                "notused": 0,
+                "detail": "BLOOM FILTER ON ss (store_id=? AND user_id=?)"
+              },
+              {
+                "id": 30,
+                "parent": 0,
+                "notused": 36,
+                "detail": "SEARCH ss USING INDEX sqlite_autoindex_store_staff_1 (store_id=? AND user_id=?)"
+              },
+              {
+                "id": 41,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 49,
+                "parent": 0,
+                "notused": 38,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 12,
+                "parent": 0,
+                "notused": 59,
+                "detail": "SEARCH ss USING INDEX idx_staff_user (user_id=? AND is_active=?)"
+              },
+              {
+                "id": 20,
+                "parent": 0,
+                "notused": 36,
+                "detail": "SEARCH c USING INDEX idx_coupons_store_expiry (store_id=?)"
+              },
+              {
+                "id": 25,
+                "parent": 0,
+                "notused": 35,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 33,
+                "parent": 0,
+                "notused": 68,
+                "detail": "SEARCH o USING INDEX idx_orders_coupon (coupon_id=?)"
+              },
+              {
+                "id": 38,
+                "parent": 0,
+                "notused": 38,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 81,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ]
+          }
+        },
+        {
+          "id": "discovery",
+          "label": "District/category discovery",
+          "sql": "SELECT store_id,name,district,category,price_per_person_cents,average_rating,review_count FROM store_summary WHERE is_active=1 AND district_id=? AND category_id=? ORDER BY average_rating DESC,store_id",
+          "parameters": [
+            "district-0",
+            "cat-0"
+          ],
+          "scope": "read-only discovery sample in queries.sql; current API also assembles full store objects",
+          "result_rows": 12,
+          "result_sha256": "b267451a7a9a845f06df4f3892cffe4324842fc804581441067bf0ddd44544c8",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.605854,
+              "p95_ms": 0.646125,
+              "min_ms": 0.586417,
+              "max_ms": 0.647167,
+              "samples_ms": [
+                0.629625,
+                0.607791,
+                0.636291,
+                0.596917,
+                0.606209,
+                0.607666,
+                0.6065,
+                0.605875,
+                0.612,
+                0.633917,
+                0.647167,
+                0.604084,
+                0.590292,
+                0.592375,
+                0.5935,
+                0.591208,
+                0.605833,
+                0.586417,
+                0.620792,
+                0.598125,
+                0.5905,
+                0.599,
+                0.60225,
+                0.622792,
+                0.6025,
+                0.600916,
+                0.646125,
+                0.607958,
+                0.602917,
+                0.630375
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.6328754999999999,
+              "p95_ms": 0.65375,
+              "min_ms": 0.615208,
+              "max_ms": 0.674042,
+              "samples_ms": [
+                0.633459,
+                0.631375,
+                0.674042,
+                0.651083,
+                0.629041,
+                0.645333,
+                0.633583,
+                0.624209,
+                0.629875,
+                0.632292,
+                0.642625,
+                0.625166,
+                0.65,
+                0.631833,
+                0.623208,
+                0.638666,
+                0.65375,
+                0.638042,
+                0.644459,
+                0.63975,
+                0.626042,
+                0.629125,
+                0.630083,
+                0.630459,
+                0.615208,
+                0.627458,
+                0.624417,
+                0.650834,
+                0.64525,
+                0.634125
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 0.9573036086876487,
+          "plans": {
+            "baseline": [
+              {
+                "id": 2,
+                "parent": 0,
+                "notused": 0,
+                "detail": "CO-ROUTINE store_summary"
+              },
+              {
+                "id": 15,
+                "parent": 2,
+                "notused": 89,
+                "detail": "SCAN s USING INDEX sqlite_autoindex_stores_1"
+              },
+              {
+                "id": 18,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH cat USING INDEX sqlite_autoindex_categories_1 (category_id=?)"
+              },
+              {
+                "id": 23,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH d USING INDEX sqlite_autoindex_districts_1 (district_id=?)"
+              },
+              {
+                "id": 28,
+                "parent": 2,
+                "notused": 81,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SCAN store_summary"
+              },
+              {
+                "id": 109,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 2,
+                "parent": 0,
+                "notused": 0,
+                "detail": "CO-ROUTINE store_summary"
+              },
+              {
+                "id": 15,
+                "parent": 2,
+                "notused": 89,
+                "detail": "SCAN s USING INDEX sqlite_autoindex_stores_1"
+              },
+              {
+                "id": 18,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH cat USING INDEX sqlite_autoindex_categories_1 (category_id=?)"
+              },
+              {
+                "id": 23,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH d USING INDEX sqlite_autoindex_districts_1 (district_id=?)"
+              },
+              {
+                "id": 28,
+                "parent": 2,
+                "notused": 81,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SCAN store_summary"
+              },
+              {
+                "id": 109,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ]
+          }
+        },
+        {
+          "id": "code_lookup",
+          "label": "Voucher code lookup (control)",
+          "sql": "SELECT order_id,user_id,coupon_id FROM orders WHERE redeem_code=?",
+          "parameters": [
+            "LD-BENCH000000000100"
+          ],
+          "scope": "lookup retains the UNIQUE redeem_code constraint index in both conditions",
+          "result_rows": 1,
+          "result_sha256": "407403d27dcfc2c89a24e083d5660dbbb5255ea13415e125272afcf1b086577a",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.003709,
+              "p95_ms": 0.003958,
+              "min_ms": 0.003625,
+              "max_ms": 0.003958,
+              "samples_ms": [
+                0.003958,
+                0.00375,
+                0.003792,
+                0.00375,
+                0.00375,
+                0.003708,
+                0.003667,
+                0.003708,
+                0.003792,
+                0.003833,
+                0.003667,
+                0.003625,
+                0.003875,
+                0.003709,
+                0.003709,
+                0.003791,
+                0.003667,
+                0.003625,
+                0.003708,
+                0.003667,
+                0.003958,
+                0.003666,
+                0.003709,
+                0.003667,
+                0.003834,
+                0.003708,
+                0.003625,
+                0.003792,
+                0.003875,
+                0.00375
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.003708,
+              "p95_ms": 0.003958,
+              "min_ms": 0.003583,
+              "max_ms": 0.00425,
+              "samples_ms": [
+                0.00425,
+                0.003833,
+                0.00375,
+                0.003666,
+                0.003833,
+                0.003708,
+                0.00375,
+                0.003708,
+                0.00375,
+                0.003708,
+                0.00375,
+                0.003667,
+                0.003958,
+                0.00375,
+                0.003667,
+                0.003625,
+                0.003666,
+                0.003625,
+                0.003834,
+                0.003708,
+                0.003833,
+                0.003666,
+                0.003625,
+                0.003625,
+                0.003792,
+                0.003708,
+                0.003667,
+                0.003709,
+                0.00375,
+                0.003583
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.000269687162891,
+          "plans": {
+            "baseline": [
+              {
+                "id": 3,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH orders USING INDEX sqlite_autoindex_orders_2 (redeem_code=?)"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 3,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH orders USING INDEX sqlite_autoindex_orders_2 (redeem_code=?)"
+              }
+            ]
+          }
+        }
+      ],
+      "guest_state": {
+        "median_ms": 14.325458,
+        "p95_ms": 14.331458,
+        "min_ms": 14.298542,
+        "max_ms": 14.331458,
+        "samples_ms": [
+          14.325458,
+          14.298542,
+          14.331458
+        ],
+        "payload_bytes": 1494815,
+        "reviews_returned": 5000,
+        "scope": "indexed database; actual service.state(None) plus server-style JSON/UTF-8 encoding; excludes sockets and browser",
+        "measured_runs": 3,
+        "warmup_runs": 1
+      }
+    },
+    {
+      "scale": "medium",
+      "counts": {
+        "users": 10000,
+        "merchants": 100,
+        "stores": 1000,
+        "reviews": 50000,
+        "orders": 20000,
+        "redemptions": 4000,
+        "coupons": 1000,
+        "menu_items": 3000
+      },
+      "dropped_business_indexes": [
+        "idx_coupons_store_expiry",
+        "idx_favorites_store",
+        "idx_merchants_owner",
+        "idx_orders_coupon",
+        "idx_orders_user_purchased",
+        "idx_redemptions_staff_time",
+        "idx_reviews_store_created",
+        "idx_reviews_user",
+        "idx_staff_user",
+        "idx_store_tags_tag",
+        "idx_stores_category",
+        "idx_stores_district_category",
+        "idx_stores_merchant"
+      ],
+      "storage_bytes": {
+        "baseline": 15421440,
+        "indexed": 19181568
+      },
+      "queries": [
+        {
+          "id": "reviews_hot",
+          "label": "Latest reviews: hot store",
+          "sql": "SELECT r.review_id,u.display_name,r.rating,r.comment FROM reviews r JOIN users u ON u.user_id=r.user_id WHERE r.store_id=? ORDER BY r.created_at DESC,r.review_id LIMIT 10",
+          "parameters": [
+            "b-s000000"
+          ],
+          "scope": "sample SQL, LIMIT 10; current review endpoint is not paginated",
+          "result_rows": 10,
+          "result_sha256": "aa5fa813c28f63c09a8976753909934ec51750a5cef5f509e7c4793153515166",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 1.1242295,
+              "p95_ms": 1.171208,
+              "min_ms": 1.093125,
+              "max_ms": 1.177666,
+              "samples_ms": [
+                1.155416,
+                1.118083,
+                1.149708,
+                1.13275,
+                1.106125,
+                1.097833,
+                1.098875,
+                1.119,
+                1.1,
+                1.100083,
+                1.140375,
+                1.142334,
+                1.119416,
+                1.111334,
+                1.107708,
+                1.127375,
+                1.093125,
+                1.098833,
+                1.099,
+                1.152458,
+                1.155958,
+                1.126875,
+                1.177666,
+                1.158334,
+                1.121584,
+                1.11725,
+                1.13625,
+                1.171208,
+                1.16875,
+                1.169625
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.0097085,
+              "p95_ms": 0.014167,
+              "min_ms": 0.008625,
+              "max_ms": 0.015083,
+              "samples_ms": [
+                0.010125,
+                0.008958,
+                0.009375,
+                0.012375,
+                0.00975,
+                0.010042,
+                0.008917,
+                0.0125,
+                0.009292,
+                0.008625,
+                0.009416,
+                0.011833,
+                0.009417,
+                0.010083,
+                0.00975,
+                0.009541,
+                0.008625,
+                0.009375,
+                0.009166,
+                0.009208,
+                0.014167,
+                0.010625,
+                0.010125,
+                0.01025,
+                0.009542,
+                0.009541,
+                0.009708,
+                0.009709,
+                0.015083,
+                0.010791
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 115.79847556265128,
+          "plans": {
+            "baseline": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              },
+              {
+                "id": 32,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reviews_regular",
+          "label": "Latest reviews: regular store",
+          "sql": "SELECT r.review_id,u.display_name,r.rating,r.comment FROM reviews r JOIN users u ON u.user_id=r.user_id WHERE r.store_id=? ORDER BY r.created_at DESC,r.review_id LIMIT 10",
+          "parameters": [
+            "b-s000001"
+          ],
+          "scope": "sample SQL, LIMIT 10; current review endpoint is not paginated",
+          "result_rows": 10,
+          "result_sha256": "ed586656014b2da17ed66a8575c5c2a21d5a1b60676f8689a2f6a53fbdb24d0a",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.020208,
+              "p95_ms": 0.022042,
+              "min_ms": 0.019958,
+              "max_ms": 0.023583,
+              "samples_ms": [
+                0.022042,
+                0.021875,
+                0.023583,
+                0.020583,
+                0.020375,
+                0.020333,
+                0.020541,
+                0.020417,
+                0.020208,
+                0.020125,
+                0.020208,
+                0.020209,
+                0.020041,
+                0.02025,
+                0.020125,
+                0.02025,
+                0.020125,
+                0.020084,
+                0.020042,
+                0.020625,
+                0.020084,
+                0.02025,
+                0.020125,
+                0.02,
+                0.020125,
+                0.02025,
+                0.020083,
+                0.019958,
+                0.020042,
+                0.020167
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.008666,
+              "p95_ms": 0.009291,
+              "min_ms": 0.008333,
+              "max_ms": 0.010292,
+              "samples_ms": [
+                0.009291,
+                0.010292,
+                0.008875,
+                0.009125,
+                0.008708,
+                0.008584,
+                0.008666,
+                0.008667,
+                0.008625,
+                0.008625,
+                0.00875,
+                0.008458,
+                0.008791,
+                0.0085,
+                0.008667,
+                0.008584,
+                0.008583,
+                0.008333,
+                0.008708,
+                0.008834,
+                0.008666,
+                0.008417,
+                0.008708,
+                0.008666,
+                0.008875,
+                0.008375,
+                0.008625,
+                0.008584,
+                0.008583,
+                0.008375
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 2.3318716824371104,
+          "plans": {
+            "baseline": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              },
+              {
+                "id": 32,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wallet_hot",
+          "label": "Wallet: frequent buyer",
+          "sql": "SELECT * FROM wallet WHERE user_id=? ORDER BY purchased_at DESC,order_id",
+          "parameters": [
+            "b-u000000"
+          ],
+          "scope": "current orders_for_user SQL; all matching orders fetched",
+          "result_rows": 2000,
+          "result_sha256": "44aeb8a72704f69ad4a6dde828992cc831adcdc49a68af913a7531743cbf04b4",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 2.6006665,
+              "p95_ms": 2.78475,
+              "min_ms": 2.53425,
+              "max_ms": 2.864917,
+              "samples_ms": [
+                2.78475,
+                2.594208,
+                2.545833,
+                2.576,
+                2.757125,
+                2.864917,
+                2.597666,
+                2.590834,
+                2.599167,
+                2.597917,
+                2.683541,
+                2.756959,
+                2.605791,
+                2.559958,
+                2.550667,
+                2.595917,
+                2.653042,
+                2.6235,
+                2.53425,
+                2.554875,
+                2.566792,
+                2.64,
+                2.773875,
+                2.647,
+                2.560917,
+                2.622041,
+                2.647,
+                2.7115,
+                2.602166,
+                2.541625
+              ]
+            },
+            "indexed": {
+              "median_ms": 2.502354,
+              "p95_ms": 3.071667,
+              "min_ms": 2.437541,
+              "max_ms": 3.144375,
+              "samples_ms": [
+                3.071667,
+                2.564834,
+                2.5015,
+                2.462625,
+                2.464542,
+                2.6255,
+                3.144375,
+                2.491834,
+                2.478625,
+                2.48525,
+                2.488166,
+                2.913708,
+                2.503208,
+                2.534417,
+                2.485708,
+                2.437541,
+                2.622625,
+                2.888542,
+                2.475917,
+                2.485416,
+                2.50325,
+                2.444208,
+                2.883708,
+                2.454542,
+                2.45175,
+                2.509333,
+                2.520125,
+                2.615667,
+                2.839333,
+                2.490875
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.0392880064131613,
+          "plans": {
+            "baseline": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 45,
+                "detail": "SEARCH o USING INDEX sqlite_autoindex_orders_3 (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 41,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 68,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 45,
+                "detail": "SEARCH o USING INDEX idx_orders_user_purchased (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 41,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wallet_regular",
+          "label": "Wallet: regular buyer",
+          "sql": "SELECT * FROM wallet WHERE user_id=? ORDER BY purchased_at DESC,order_id",
+          "parameters": [
+            "b-u000999"
+          ],
+          "scope": "current orders_for_user SQL; all matching orders fetched",
+          "result_rows": 2,
+          "result_sha256": "a69725230264776cee604fbc159fcb3776927caabd53a9bc8a94dd6e3d4e23e8",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.007042,
+              "p95_ms": 0.009375,
+              "min_ms": 0.006833,
+              "max_ms": 0.009458,
+              "samples_ms": [
+                0.007625,
+                0.007458,
+                0.007583,
+                0.007208,
+                0.008417,
+                0.007167,
+                0.0075,
+                0.009375,
+                0.007958,
+                0.009458,
+                0.009375,
+                0.009167,
+                0.006958,
+                0.007417,
+                0.006958,
+                0.006917,
+                0.006916,
+                0.007,
+                0.007042,
+                0.006875,
+                0.006917,
+                0.007083,
+                0.006875,
+                0.006917,
+                0.007042,
+                0.006875,
+                0.006958,
+                0.006917,
+                0.006833,
+                0.006917
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.0063955,
+              "p95_ms": 0.0085,
+              "min_ms": 0.006208,
+              "max_ms": 0.008583,
+              "samples_ms": [
+                0.006958,
+                0.006542,
+                0.0065,
+                0.006334,
+                0.008167,
+                0.006584,
+                0.0065,
+                0.006375,
+                0.008583,
+                0.008292,
+                0.0085,
+                0.008041,
+                0.006292,
+                0.006542,
+                0.006416,
+                0.006375,
+                0.006208,
+                0.006416,
+                0.00625,
+                0.006375,
+                0.006458,
+                0.006208,
+                0.006333,
+                0.006334,
+                0.006333,
+                0.006417,
+                0.00625,
+                0.006292,
+                0.006292,
+                0.006292
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.1010867015870534,
+          "plans": {
+            "baseline": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 45,
+                "detail": "SEARCH o USING INDEX sqlite_autoindex_orders_3 (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 41,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 68,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 45,
+                "detail": "SEARCH o USING INDEX idx_orders_user_purchased (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 41,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              }
+            ]
+          }
+        },
+        {
+          "id": "merchant",
+          "label": "Merchant branch ledger",
+          "sql": "SELECT w.* FROM wallet w JOIN store_staff ss ON ss.store_id=w.store_id WHERE ss.user_id=? AND ss.is_active=1 ORDER BY w.purchased_at DESC,w.order_id",
+          "parameters": [
+            "b-u000000"
+          ],
+          "scope": "current merchant_orders SQL; all matching branch orders fetched",
+          "result_rows": 200,
+          "result_sha256": "b447dc9dcd785f6bb8d069f48a1822e4ad0fcaa70087564755f52186d8e7ccb6",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 3.8481875,
+              "p95_ms": 3.979791,
+              "min_ms": 3.762375,
+              "max_ms": 4.075208,
+              "samples_ms": [
+                3.914625,
+                3.926833,
+                3.861666,
+                3.85375,
+                3.798625,
+                3.775875,
+                3.780083,
+                3.851292,
+                3.809042,
+                3.903917,
+                3.850542,
+                3.874875,
+                3.762375,
+                3.766875,
+                3.787666,
+                3.802917,
+                3.822,
+                3.845833,
+                3.891208,
+                3.763083,
+                3.792084,
+                3.822833,
+                4.075208,
+                3.907541,
+                3.805625,
+                3.770416,
+                3.979791,
+                3.875583,
+                3.88975,
+                3.863333
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.290792,
+              "p95_ms": 0.325209,
+              "min_ms": 0.275791,
+              "max_ms": 0.342416,
+              "samples_ms": [
+                0.288958,
+                0.279167,
+                0.302,
+                0.286041,
+                0.286208,
+                0.325209,
+                0.284667,
+                0.295291,
+                0.285416,
+                0.275791,
+                0.296625,
+                0.290125,
+                0.284958,
+                0.2965,
+                0.323458,
+                0.292417,
+                0.32325,
+                0.286709,
+                0.302875,
+                0.291333,
+                0.287333,
+                0.290292,
+                0.309833,
+                0.280084,
+                0.342416,
+                0.283,
+                0.293792,
+                0.291292,
+                0.321958,
+                0.288584
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 13.23347100332884,
+          "plans": {
+            "baseline": [
+              {
+                "id": 11,
+                "parent": 0,
+                "notused": 158,
+                "detail": "SCAN o"
+              },
+              {
+                "id": 13,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 19,
+                "parent": 0,
+                "notused": 0,
+                "detail": "BLOOM FILTER ON ss (store_id=? AND user_id=?)"
+              },
+              {
+                "id": 30,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH ss USING INDEX sqlite_autoindex_store_staff_1 (store_id=? AND user_id=?)"
+              },
+              {
+                "id": 41,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 49,
+                "parent": 0,
+                "notused": 41,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 12,
+                "parent": 0,
+                "notused": 60,
+                "detail": "SEARCH ss USING INDEX idx_staff_user (user_id=? AND is_active=?)"
+              },
+              {
+                "id": 20,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH c USING INDEX idx_coupons_store_expiry (store_id=?)"
+              },
+              {
+                "id": 25,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 33,
+                "parent": 0,
+                "notused": 68,
+                "detail": "SEARCH o USING INDEX idx_orders_coupon (coupon_id=?)"
+              },
+              {
+                "id": 38,
+                "parent": 0,
+                "notused": 41,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 81,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ]
+          }
+        },
+        {
+          "id": "discovery",
+          "label": "District/category discovery",
+          "sql": "SELECT store_id,name,district,category,price_per_person_cents,average_rating,review_count FROM store_summary WHERE is_active=1 AND district_id=? AND category_id=? ORDER BY average_rating DESC,store_id",
+          "parameters": [
+            "district-0",
+            "cat-0"
+          ],
+          "scope": "read-only discovery sample in queries.sql; current API also assembles full store objects",
+          "result_rows": 112,
+          "result_sha256": "21cc993da9bec5b107fd1f25a866ec333b0923b932febd2533dc94e67d914c20",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 8.910896000000001,
+              "p95_ms": 9.188125,
+              "min_ms": 8.604375,
+              "max_ms": 9.265583,
+              "samples_ms": [
+                8.844292,
+                8.718416,
+                8.744125,
+                8.740125,
+                8.687541,
+                8.763916,
+                8.860083,
+                8.959792,
+                8.84175,
+                8.662667,
+                8.699,
+                8.604375,
+                8.862,
+                8.7005,
+                9.016292,
+                9.155083,
+                9.108708,
+                9.265583,
+                9.069875,
+                9.007334,
+                9.030667,
+                9.188125,
+                9.0665,
+                8.99725,
+                9.040084,
+                9.086041,
+                8.81475,
+                9.011959,
+                9.011042,
+                8.838459
+              ]
+            },
+            "indexed": {
+              "median_ms": 9.498438,
+              "p95_ms": 9.783833,
+              "min_ms": 9.119375,
+              "max_ms": 9.804,
+              "samples_ms": [
+                9.241083,
+                9.209791,
+                9.494959,
+                9.570708,
+                9.48125,
+                9.220667,
+                9.804,
+                9.522959,
+                9.322375,
+                9.462958,
+                9.119375,
+                9.211709,
+                9.207958,
+                9.783833,
+                9.605541,
+                9.6765,
+                9.532833,
+                9.578166,
+                9.594208,
+                9.388208,
+                9.617209,
+                9.472292,
+                9.523167,
+                9.474334,
+                9.501917,
+                9.5635,
+                9.701875,
+                9.452375,
+                9.425583,
+                9.577625
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 0.9381433031410008,
+          "plans": {
+            "baseline": [
+              {
+                "id": 2,
+                "parent": 0,
+                "notused": 0,
+                "detail": "CO-ROUTINE store_summary"
+              },
+              {
+                "id": 15,
+                "parent": 2,
+                "notused": 122,
+                "detail": "SCAN s USING INDEX sqlite_autoindex_stores_1"
+              },
+              {
+                "id": 18,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH cat USING INDEX sqlite_autoindex_categories_1 (category_id=?)"
+              },
+              {
+                "id": 23,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH d USING INDEX sqlite_autoindex_districts_1 (district_id=?)"
+              },
+              {
+                "id": 28,
+                "parent": 2,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SCAN store_summary"
+              },
+              {
+                "id": 109,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 2,
+                "parent": 0,
+                "notused": 0,
+                "detail": "CO-ROUTINE store_summary"
+              },
+              {
+                "id": 15,
+                "parent": 2,
+                "notused": 122,
+                "detail": "SCAN s USING INDEX sqlite_autoindex_stores_1"
+              },
+              {
+                "id": 18,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH cat USING INDEX sqlite_autoindex_categories_1 (category_id=?)"
+              },
+              {
+                "id": 23,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH d USING INDEX sqlite_autoindex_districts_1 (district_id=?)"
+              },
+              {
+                "id": 28,
+                "parent": 2,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SCAN store_summary"
+              },
+              {
+                "id": 109,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ]
+          }
+        },
+        {
+          "id": "code_lookup",
+          "label": "Voucher code lookup (control)",
+          "sql": "SELECT order_id,user_id,coupon_id FROM orders WHERE redeem_code=?",
+          "parameters": [
+            "LD-BENCH000000000100"
+          ],
+          "scope": "lookup retains the UNIQUE redeem_code constraint index in both conditions",
+          "result_rows": 1,
+          "result_sha256": "0907c44d829c78bf4bf79c4953798b22a833409b7b6c3855aea7e06cc84a105d",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.003792,
+              "p95_ms": 0.004083,
+              "min_ms": 0.003708,
+              "max_ms": 0.004292,
+              "samples_ms": [
+                0.004083,
+                0.004292,
+                0.003917,
+                0.003916,
+                0.004041,
+                0.003917,
+                0.003833,
+                0.003875,
+                0.003708,
+                0.004041,
+                0.003875,
+                0.003791,
+                0.003791,
+                0.003792,
+                0.00375,
+                0.003792,
+                0.003708,
+                0.003791,
+                0.003792,
+                0.00375,
+                0.003917,
+                0.003833,
+                0.00375,
+                0.003792,
+                0.003791,
+                0.00375,
+                0.00375,
+                0.00375,
+                0.003791,
+                0.003792
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.0038125,
+              "p95_ms": 0.004458,
+              "min_ms": 0.003667,
+              "max_ms": 0.0045,
+              "samples_ms": [
+                0.004458,
+                0.004042,
+                0.004,
+                0.003792,
+                0.003834,
+                0.0045,
+                0.00375,
+                0.003917,
+                0.003791,
+                0.003833,
+                0.004125,
+                0.003833,
+                0.003917,
+                0.003834,
+                0.003792,
+                0.003875,
+                0.003709,
+                0.003916,
+                0.003709,
+                0.00375,
+                0.004,
+                0.00375,
+                0.00375,
+                0.003708,
+                0.003708,
+                0.003667,
+                0.003958,
+                0.003708,
+                0.003708,
+                0.00375
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 0.9946229508196721,
+          "plans": {
+            "baseline": [
+              {
+                "id": 3,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH orders USING INDEX sqlite_autoindex_orders_2 (redeem_code=?)"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 3,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH orders USING INDEX sqlite_autoindex_orders_2 (redeem_code=?)"
+              }
+            ]
+          }
+        }
+      ],
+      "guest_state": {
+        "median_ms": 154.1475,
+        "p95_ms": 156.483541,
+        "min_ms": 152.829209,
+        "max_ms": 156.483541,
+        "samples_ms": [
+          154.1475,
+          152.829209,
+          156.483541
+        ],
+        "payload_bytes": 15005786,
+        "reviews_returned": 50000,
+        "scope": "indexed database; actual service.state(None) plus server-style JSON/UTF-8 encoding; excludes sockets and browser",
+        "measured_runs": 3,
+        "warmup_runs": 1
+      }
+    },
+    {
+      "scale": "large",
+      "counts": {
+        "users": 20000,
+        "merchants": 200,
+        "stores": 2000,
+        "reviews": 100000,
+        "orders": 50000,
+        "redemptions": 10000,
+        "coupons": 2000,
+        "menu_items": 6000
+      },
+      "dropped_business_indexes": [
+        "idx_coupons_store_expiry",
+        "idx_favorites_store",
+        "idx_merchants_owner",
+        "idx_orders_coupon",
+        "idx_orders_user_purchased",
+        "idx_redemptions_staff_time",
+        "idx_reviews_store_created",
+        "idx_reviews_user",
+        "idx_staff_user",
+        "idx_store_tags_tag",
+        "idx_stores_category",
+        "idx_stores_district_category",
+        "idx_stores_merchant"
+      ],
+      "storage_bytes": {
+        "baseline": 33107968,
+        "indexed": 41193472
+      },
+      "queries": [
+        {
+          "id": "reviews_hot",
+          "label": "Latest reviews: hot store",
+          "sql": "SELECT r.review_id,u.display_name,r.rating,r.comment FROM reviews r JOIN users u ON u.user_id=r.user_id WHERE r.store_id=? ORDER BY r.created_at DESC,r.review_id LIMIT 10",
+          "parameters": [
+            "b-s000000"
+          ],
+          "scope": "sample SQL, LIMIT 10; current review endpoint is not paginated",
+          "result_rows": 10,
+          "result_sha256": "ffcd29985fe40cf1eae86ae745ad14d51e1d51a1d015ef35cf0dd638eca0714b",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 2.283271,
+              "p95_ms": 2.330625,
+              "min_ms": 2.214041,
+              "max_ms": 2.346667,
+              "samples_ms": [
+                2.293166,
+                2.299125,
+                2.261334,
+                2.290416,
+                2.259167,
+                2.296416,
+                2.236583,
+                2.292916,
+                2.238458,
+                2.330625,
+                2.323125,
+                2.284625,
+                2.260167,
+                2.269625,
+                2.292875,
+                2.239,
+                2.214041,
+                2.226333,
+                2.346667,
+                2.294333,
+                2.281917,
+                2.318791,
+                2.295542,
+                2.260208,
+                2.317417,
+                2.322709,
+                2.260209,
+                2.269292,
+                2.22775,
+                2.24875
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.010083,
+              "p95_ms": 0.013209,
+              "min_ms": 0.0085,
+              "max_ms": 0.013917,
+              "samples_ms": [
+                0.013917,
+                0.010833,
+                0.009083,
+                0.009875,
+                0.008791,
+                0.01025,
+                0.011833,
+                0.009625,
+                0.010583,
+                0.013209,
+                0.009625,
+                0.010709,
+                0.010083,
+                0.009625,
+                0.012791,
+                0.010334,
+                0.009083,
+                0.009959,
+                0.012042,
+                0.010083,
+                0.010958,
+                0.008666,
+                0.010083,
+                0.011375,
+                0.009875,
+                0.009875,
+                0.009625,
+                0.0085,
+                0.01225,
+                0.009709
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 226.4475850441337,
+          "plans": {
+            "baseline": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              },
+              {
+                "id": 32,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "reviews_regular",
+          "label": "Latest reviews: regular store",
+          "sql": "SELECT r.review_id,u.display_name,r.rating,r.comment FROM reviews r JOIN users u ON u.user_id=r.user_id WHERE r.store_id=? ORDER BY r.created_at DESC,r.review_id LIMIT 10",
+          "parameters": [
+            "b-s000001"
+          ],
+          "scope": "sample SQL, LIMIT 10; current review endpoint is not paginated",
+          "result_rows": 10,
+          "result_sha256": "39ba2067e87e781e9a745ecdcae4f5539f52fa2660aed0609617b67a623da53b",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.0210005,
+              "p95_ms": 0.025792,
+              "min_ms": 0.020708,
+              "max_ms": 0.028041,
+              "samples_ms": [
+                0.023,
+                0.021833,
+                0.021417,
+                0.021083,
+                0.02125,
+                0.020917,
+                0.021042,
+                0.021584,
+                0.021042,
+                0.020875,
+                0.020959,
+                0.020917,
+                0.02075,
+                0.020708,
+                0.020708,
+                0.020959,
+                0.020834,
+                0.020875,
+                0.020917,
+                0.021542,
+                0.024125,
+                0.0215,
+                0.025792,
+                0.020875,
+                0.020833,
+                0.020875,
+                0.020834,
+                0.024,
+                0.028041,
+                0.021917
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.0088545,
+              "p95_ms": 0.010833,
+              "min_ms": 0.008625,
+              "max_ms": 0.011167,
+              "samples_ms": [
+                0.009292,
+                0.008958,
+                0.008917,
+                0.008875,
+                0.008791,
+                0.008625,
+                0.008834,
+                0.009,
+                0.008792,
+                0.008792,
+                0.008834,
+                0.008875,
+                0.009084,
+                0.008791,
+                0.008791,
+                0.008625,
+                0.008791,
+                0.008834,
+                0.008917,
+                0.009042,
+                0.009459,
+                0.008708,
+                0.009084,
+                0.00875,
+                0.008958,
+                0.00875,
+                0.008834,
+                0.010458,
+                0.010833,
+                0.011167
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 2.3717318877406965,
+          "plans": {
+            "baseline": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              },
+              {
+                "id": 32,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 7,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?)"
+              },
+              {
+                "id": 14,
+                "parent": 0,
+                "notused": 42,
+                "detail": "SEARCH u USING INDEX sqlite_autoindex_users_1 (user_id=?)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wallet_hot",
+          "label": "Wallet: frequent buyer",
+          "sql": "SELECT * FROM wallet WHERE user_id=? ORDER BY purchased_at DESC,order_id",
+          "parameters": [
+            "b-u000000"
+          ],
+          "scope": "current orders_for_user SQL; all matching orders fetched",
+          "result_rows": 5000,
+          "result_sha256": "5efb68fdb454a3d322f340dbfee382b728f81eabc8ca9fb2e12ac542ae54ec10",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 6.721958000000001,
+              "p95_ms": 7.262792,
+              "min_ms": 6.509583,
+              "max_ms": 7.444667,
+              "samples_ms": [
+                6.635709,
+                6.883917,
+                7.193292,
+                6.59225,
+                6.92625,
+                6.718625,
+                7.192834,
+                6.5705,
+                6.771416,
+                7.222833,
+                6.586458,
+                6.509583,
+                6.745792,
+                6.681041,
+                6.716542,
+                6.613958,
+                6.880792,
+                7.201083,
+                6.540916,
+                6.595333,
+                6.786916,
+                7.444667,
+                6.625042,
+                6.53825,
+                6.824334,
+                7.262792,
+                6.566125,
+                6.759917,
+                6.66625,
+                6.725291
+              ]
+            },
+            "indexed": {
+              "median_ms": 6.328396,
+              "p95_ms": 6.769958,
+              "min_ms": 6.2045,
+              "max_ms": 6.897208,
+              "samples_ms": [
+                6.290083,
+                6.2045,
+                6.490916,
+                6.319375,
+                6.320292,
+                6.524209,
+                6.386708,
+                6.225417,
+                6.41,
+                6.542375,
+                6.282,
+                6.471167,
+                6.315875,
+                6.769958,
+                6.32325,
+                6.410167,
+                6.333542,
+                6.348916,
+                6.267333,
+                6.463375,
+                6.23325,
+                6.320584,
+                6.239125,
+                6.48525,
+                6.422875,
+                6.302041,
+                6.215791,
+                6.240625,
+                6.467083,
+                6.897208
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.0621898503191016,
+          "plans": {
+            "baseline": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 50,
+                "detail": "SEARCH o USING INDEX sqlite_autoindex_orders_3 (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 40,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 43,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 68,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 50,
+                "detail": "SEARCH o USING INDEX idx_orders_user_purchased (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 40,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 43,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wallet_regular",
+          "label": "Wallet: regular buyer",
+          "sql": "SELECT * FROM wallet WHERE user_id=? ORDER BY purchased_at DESC,order_id",
+          "parameters": [
+            "b-u000999"
+          ],
+          "scope": "current orders_for_user SQL; all matching orders fetched",
+          "result_rows": 3,
+          "result_sha256": "56c3099e8de5b693618481a37b4db028eeca786b98a56f32c96654c242fbd967",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.0085,
+              "p95_ms": 0.009,
+              "min_ms": 0.00825,
+              "max_ms": 0.009416,
+              "samples_ms": [
+                0.009416,
+                0.008708,
+                0.008625,
+                0.008958,
+                0.008667,
+                0.008417,
+                0.008709,
+                0.0085,
+                0.0085,
+                0.008375,
+                0.0085,
+                0.008667,
+                0.008458,
+                0.009,
+                0.008541,
+                0.008708,
+                0.008416,
+                0.008375,
+                0.008625,
+                0.008458,
+                0.008417,
+                0.0085,
+                0.0085,
+                0.008667,
+                0.00825,
+                0.008542,
+                0.0085,
+                0.008666,
+                0.008333,
+                0.008458
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.007542,
+              "p95_ms": 0.008083,
+              "min_ms": 0.007333,
+              "max_ms": 0.008166,
+              "samples_ms": [
+                0.008083,
+                0.008166,
+                0.007792,
+                0.007625,
+                0.007542,
+                0.007625,
+                0.0075,
+                0.007833,
+                0.007333,
+                0.007625,
+                0.007916,
+                0.007834,
+                0.007583,
+                0.007958,
+                0.0075,
+                0.007416,
+                0.007542,
+                0.007583,
+                0.007458,
+                0.007708,
+                0.007375,
+                0.007542,
+                0.0075,
+                0.0075,
+                0.0075,
+                0.007542,
+                0.007458,
+                0.007417,
+                0.007459,
+                0.007417
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.1270220100769028,
+          "plans": {
+            "baseline": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 50,
+                "detail": "SEARCH o USING INDEX sqlite_autoindex_orders_3 (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 40,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 43,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 68,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 10,
+                "parent": 0,
+                "notused": 50,
+                "detail": "SEARCH o USING INDEX idx_orders_user_purchased (user_id=?)"
+              },
+              {
+                "id": 17,
+                "parent": 0,
+                "notused": 40,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 22,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 27,
+                "parent": 0,
+                "notused": 43,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              }
+            ]
+          }
+        },
+        {
+          "id": "merchant",
+          "label": "Merchant branch ledger",
+          "sql": "SELECT w.* FROM wallet w JOIN store_staff ss ON ss.store_id=w.store_id WHERE ss.user_id=? AND ss.is_active=1 ORDER BY w.purchased_at DESC,w.order_id",
+          "parameters": [
+            "b-u000000"
+          ],
+          "scope": "current merchant_orders SQL; all matching branch orders fetched",
+          "result_rows": 250,
+          "result_sha256": "ebccdfa3edf6adc2aef20eb6d6447cf139057949132a331e409e5f18c67a3ef0",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 9.694104,
+              "p95_ms": 9.793625,
+              "min_ms": 9.542667,
+              "max_ms": 9.803375,
+              "samples_ms": [
+                9.803375,
+                9.679084,
+                9.7675,
+                9.749375,
+                9.663,
+                9.730042,
+                9.577416,
+                9.758291,
+                9.793625,
+                9.65725,
+                9.693333,
+                9.643458,
+                9.719709,
+                9.655,
+                9.670166,
+                9.697959,
+                9.72075,
+                9.629209,
+                9.695,
+                9.694875,
+                9.663083,
+                9.637959,
+                9.707917,
+                9.542667,
+                9.600375,
+                9.652083,
+                9.719,
+                9.68,
+                9.778375,
+                9.729083
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.3769585,
+              "p95_ms": 0.403208,
+              "min_ms": 0.358541,
+              "max_ms": 0.412375,
+              "samples_ms": [
+                0.394167,
+                0.389833,
+                0.412375,
+                0.377042,
+                0.382875,
+                0.364166,
+                0.38025,
+                0.395417,
+                0.361833,
+                0.374583,
+                0.370708,
+                0.403208,
+                0.379042,
+                0.378209,
+                0.358541,
+                0.372375,
+                0.376875,
+                0.382084,
+                0.379667,
+                0.358875,
+                0.373875,
+                0.380708,
+                0.374209,
+                0.371083,
+                0.373125,
+                0.375291,
+                0.372291,
+                0.401041,
+                0.375875,
+                0.3955
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 25.71663458974927,
+          "plans": {
+            "baseline": [
+              {
+                "id": 11,
+                "parent": 0,
+                "notused": 172,
+                "detail": "SCAN o"
+              },
+              {
+                "id": 13,
+                "parent": 0,
+                "notused": 40,
+                "detail": "SEARCH c USING INDEX sqlite_autoindex_coupons_1 (coupon_id=?)"
+              },
+              {
+                "id": 19,
+                "parent": 0,
+                "notused": 0,
+                "detail": "BLOOM FILTER ON ss (store_id=? AND user_id=?)"
+              },
+              {
+                "id": 30,
+                "parent": 0,
+                "notused": 40,
+                "detail": "SEARCH ss USING INDEX sqlite_autoindex_store_staff_1 (store_id=? AND user_id=?)"
+              },
+              {
+                "id": 41,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 49,
+                "parent": 0,
+                "notused": 43,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 12,
+                "parent": 0,
+                "notused": 60,
+                "detail": "SEARCH ss USING INDEX idx_staff_user (user_id=? AND is_active=?)"
+              },
+              {
+                "id": 20,
+                "parent": 0,
+                "notused": 40,
+                "detail": "SEARCH c USING INDEX idx_coupons_store_expiry (store_id=?)"
+              },
+              {
+                "id": 25,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH s USING INDEX sqlite_autoindex_stores_1 (store_id=?)"
+              },
+              {
+                "id": 33,
+                "parent": 0,
+                "notused": 71,
+                "detail": "SEARCH o USING INDEX idx_orders_coupon (coupon_id=?)"
+              },
+              {
+                "id": 38,
+                "parent": 0,
+                "notused": 43,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_redemptions_1 (order_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 81,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ]
+          }
+        },
+        {
+          "id": "discovery",
+          "label": "District/category discovery",
+          "sql": "SELECT store_id,name,district,category,price_per_person_cents,average_rating,review_count FROM store_summary WHERE is_active=1 AND district_id=? AND category_id=? ORDER BY average_rating DESC,store_id",
+          "parameters": [
+            "district-0",
+            "cat-0"
+          ],
+          "scope": "read-only discovery sample in queries.sql; current API also assembles full store objects",
+          "result_rows": 223,
+          "result_sha256": "a88a36084de9c1e71313f39fc9a9a09cccccef9b67b8337a774a3c98d29f4383",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 18.0221875,
+              "p95_ms": 18.35725,
+              "min_ms": 17.62625,
+              "max_ms": 18.511,
+              "samples_ms": [
+                18.216333,
+                17.962625,
+                17.873625,
+                18.075208,
+                17.919458,
+                18.184334,
+                17.736083,
+                18.062333,
+                17.883958,
+                18.168084,
+                17.62625,
+                18.511,
+                18.35725,
+                17.995709,
+                18.148209,
+                17.990583,
+                18.048666,
+                17.949667,
+                18.317042,
+                17.691333,
+                18.15225,
+                17.921209,
+                18.309084,
+                18.141833,
+                17.819792,
+                17.982417,
+                17.705958,
+                17.849042,
+                18.125833,
+                18.162125
+              ]
+            },
+            "indexed": {
+              "median_ms": 18.9901665,
+              "p95_ms": 19.432083,
+              "min_ms": 18.747292,
+              "max_ms": 19.557875,
+              "samples_ms": [
+                18.88975,
+                19.154959,
+                19.114708,
+                18.747292,
+                18.906209,
+                18.80475,
+                19.348417,
+                19.101291,
+                18.857792,
+                18.804875,
+                19.432083,
+                19.04325,
+                19.118458,
+                19.557875,
+                18.8505,
+                19.205667,
+                19.119666,
+                19.181167,
+                18.799584,
+                19.222875,
+                18.87375,
+                19.153708,
+                18.830542,
+                18.849916,
+                18.937083,
+                18.908666,
+                19.117959,
+                19.049334,
+                18.880541,
+                18.893542
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 0.9490273558159693,
+          "plans": {
+            "baseline": [
+              {
+                "id": 2,
+                "parent": 0,
+                "notused": 0,
+                "detail": "CO-ROUTINE store_summary"
+              },
+              {
+                "id": 15,
+                "parent": 2,
+                "notused": 132,
+                "detail": "SCAN s USING INDEX sqlite_autoindex_stores_1"
+              },
+              {
+                "id": 18,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH cat USING INDEX sqlite_autoindex_categories_1 (category_id=?)"
+              },
+              {
+                "id": 23,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH d USING INDEX sqlite_autoindex_districts_1 (district_id=?)"
+              },
+              {
+                "id": 28,
+                "parent": 2,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX sqlite_autoindex_reviews_2 (store_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SCAN store_summary"
+              },
+              {
+                "id": 109,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 2,
+                "parent": 0,
+                "notused": 0,
+                "detail": "CO-ROUTINE store_summary"
+              },
+              {
+                "id": 15,
+                "parent": 2,
+                "notused": 132,
+                "detail": "SCAN s USING INDEX sqlite_autoindex_stores_1"
+              },
+              {
+                "id": 18,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH cat USING INDEX sqlite_autoindex_categories_1 (category_id=?)"
+              },
+              {
+                "id": 23,
+                "parent": 2,
+                "notused": 28,
+                "detail": "SEARCH d USING INDEX sqlite_autoindex_districts_1 (district_id=?)"
+              },
+              {
+                "id": 28,
+                "parent": 2,
+                "notused": 82,
+                "detail": "SEARCH r USING INDEX idx_reviews_store_created (store_id=?) LEFT-JOIN"
+              },
+              {
+                "id": 90,
+                "parent": 0,
+                "notused": 82,
+                "detail": "SCAN store_summary"
+              },
+              {
+                "id": 109,
+                "parent": 0,
+                "notused": 0,
+                "detail": "USE TEMP B-TREE FOR ORDER BY"
+              }
+            ]
+          }
+        },
+        {
+          "id": "code_lookup",
+          "label": "Voucher code lookup (control)",
+          "sql": "SELECT order_id,user_id,coupon_id FROM orders WHERE redeem_code=?",
+          "parameters": [
+            "LD-BENCH000000000100"
+          ],
+          "scope": "lookup retains the UNIQUE redeem_code constraint index in both conditions",
+          "result_rows": 1,
+          "result_sha256": "0907c44d829c78bf4bf79c4953798b22a833409b7b6c3855aea7e06cc84a105d",
+          "results_equal": true,
+          "conditions": {
+            "baseline": {
+              "median_ms": 0.003792,
+              "p95_ms": 0.004292,
+              "min_ms": 0.003708,
+              "max_ms": 0.004375,
+              "samples_ms": [
+                0.004125,
+                0.004,
+                0.003833,
+                0.004375,
+                0.003875,
+                0.003875,
+                0.003875,
+                0.003791,
+                0.004042,
+                0.003792,
+                0.004292,
+                0.003833,
+                0.004,
+                0.003792,
+                0.00375,
+                0.003791,
+                0.00375,
+                0.004,
+                0.003709,
+                0.003791,
+                0.003792,
+                0.004209,
+                0.003791,
+                0.00375,
+                0.003709,
+                0.00375,
+                0.00375,
+                0.003792,
+                0.003708,
+                0.00375
+              ]
+            },
+            "indexed": {
+              "median_ms": 0.003771,
+              "p95_ms": 0.004166,
+              "min_ms": 0.003708,
+              "max_ms": 0.004375,
+              "samples_ms": [
+                0.004375,
+                0.004,
+                0.004125,
+                0.003792,
+                0.003833,
+                0.003833,
+                0.00375,
+                0.003833,
+                0.00375,
+                0.003833,
+                0.00375,
+                0.003708,
+                0.004041,
+                0.003792,
+                0.00375,
+                0.004,
+                0.00375,
+                0.003958,
+                0.003708,
+                0.00375,
+                0.003833,
+                0.003708,
+                0.003917,
+                0.003708,
+                0.00375,
+                0.003708,
+                0.004166,
+                0.00375,
+                0.003709,
+                0.003708
+              ]
+            }
+          },
+          "speedup_baseline_over_indexed": 1.005568814638027,
+          "plans": {
+            "baseline": [
+              {
+                "id": 3,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH orders USING INDEX sqlite_autoindex_orders_2 (redeem_code=?)"
+              }
+            ],
+            "indexed": [
+              {
+                "id": 3,
+                "parent": 0,
+                "notused": 39,
+                "detail": "SEARCH orders USING INDEX sqlite_autoindex_orders_2 (redeem_code=?)"
+              }
+            ]
+          }
+        }
+      ],
+      "guest_state": {
+        "median_ms": 349.1125,
+        "p95_ms": 353.642542,
+        "min_ms": 330.711875,
+        "max_ms": 353.642542,
+        "samples_ms": [
+          330.711875,
+          349.1125,
+          353.642542
+        ],
+        "payload_bytes": 30028087,
+        "reviews_returned": 100000,
+        "scope": "indexed database; actual service.state(None) plus server-style JSON/UTF-8 encoding; excludes sockets and browser",
+        "measured_runs": 3,
+        "warmup_runs": 1
+      }
+    }
+  ]
+}
