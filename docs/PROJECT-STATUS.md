@@ -16,11 +16,11 @@ LocalDeal 已有连接 SQLite 的网页和 Python 后端，支持访客浏览、
 | --- | --- | --- |
 | 本机 SQL 性能评价 | 已完成 | 三档模拟数据、21 组对照、原始样本、查询计划及图表，见 [性能评价](../evaluation/README.md) |
 | 页面加载优化 | 已完成 | SQL 筛选、分页接口及页面翻页，三档同数据前后对照；仍需另行评价网络、并发与生产负载 |
-| GitHub 仓库 | 已验证为私有，完整上传及远程检查待完成 | 实际地址为 [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003)；设置页与首页均确认私有，根目录 7 个入口及说明文件已上传，仍需上传剩余源码及修订说明、检查 Actions 和老师访问权限；组员账号与邀请待另行确认 |
+| GitHub 仓库 | 私有源码完整上传，首次自动检查成功 | [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003) 的 65 个文件路径已核对；2026-10-03 源码提交 [0fe0b27](https://github.com/fljt-ai/localdeal-5003/commit/0fe0b2781bda8a83fb6eed4a09afe9810fc895a4) 的 [Project checks #1](https://github.com/fljt-ai/localdeal-5003/actions/runs/37096568279) 成功；后续结果见 [Actions](https://github.com/fljt-ai/localdeal-5003/actions)，组员邀请与老师访问尚未配置 |
 | 5–8 分钟视频 | 待录制 | 演示功能、查询与数据库变化，上传后取得可访问链接 |
 | 课程 PDF 报告 | 待撰写 | 按老师要求整理问题、架构、ER、规范化、索引、查询、评价、挑战、参考及链接 |
 | 组员资料与贡献 | 待提供 | 4–8 位组员的姓名、本科专业及实际完成的工作；不能把计划分工当成已完成贡献 |
 
-现有说明文档可以用于理解代码和准备材料，源码包不是最终报告或已经发布的仓库。最终提交文件按老师要求命名为 `XXXX-report.pdf`，并包含仓库与视频链接。
+现有说明文档和私有源码仓库可用于理解代码和准备材料，均不是最终课程报告。最终提交文件按老师要求命名为 `XXXX-report.pdf`，包含仓库与视频链接，并确认老师能够访问。
 
 代码和报告需要由组员理解、核验，并按课程规则如实标注引用与辅助工具使用。
