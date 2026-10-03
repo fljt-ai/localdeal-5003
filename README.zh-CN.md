@@ -2,7 +2,9 @@
 
 [English project overview](README.md)
 
-GitHub 仓库 [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003) 已创建，本地使用 `main` 分支；完整源码上传及远程检查仍待完成。协作方式见 [组员修改说明](CONTRIBUTING.md)，上传步骤见 [GitHub 发布指南](docs/GITHUB-PUBLISH.md)，成员姓名及实际贡献待填写到 [贡献记录](docs/CONTRIBUTIONS.md)。
+GitHub 仓库 [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003) 已验证为私有，完整 65 个源码文件已上传，本地使用 `main` 分支。私有仓库需要获授权的 GitHub 账号才能访问，组员邀请及老师访问尚未配置。协作方式见 [组员修改说明](CONTRIBUTING.md)，上传与后续维护见 [GitHub 发布指南](docs/GITHUB-PUBLISH.md)，成员姓名及实际贡献待填写到 [贡献记录](docs/CONTRIBUTIONS.md)。
+
+组员应使用各自的 GitHub 账号。确认账号后，仓库所有者可在 **Settings → Collaborators → Add people** 邀请组员；个人账号的私有仓库协作者同时拥有读取和修改权限。老师的访问方式也需要在提交前另行确认和验证。步骤及权限见 [GitHub 邀请说明](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository) 和 [个人仓库权限说明](https://docs.github.com/en/enterprise-cloud%40latest/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/permission-levels-for-a-personal-account-repository)。
 
 LocalDeal 是一个可在电脑上运行的餐饮门店、点评与数字优惠券课程项目。网页已经连接 Python HTTP 后端与 SQLite 数据库，支持密码登录、注册、收藏、点评、模拟购买，以及获授权商户的核销。所有门店和示例账号均为虚构资料；购买使用模拟支付。
 
@@ -10,7 +12,7 @@ LocalDeal 是一个可在电脑上运行的餐饮门店、点评与数字优惠�
 
 需要 **Python 3.10 或以上**，无需安装第三方 Python 包、Node.js 或前端构建工具。
 
-1. 解压已准备的源码包，保持 `frontend`、`backend`、`database` 等文件夹在同一项目目录。完整上传后，也可从 [GitHub 仓库](https://github.com/fljt-ai/localdeal-5003) 下载源码。
+1. 使用有仓库访问权限的 GitHub 账号登录，从 [GitHub 仓库](https://github.com/fljt-ai/localdeal-5003) 下载并解压源码；也可解压已准备的源码包。保持 `frontend`、`backend`、`database` 等文件夹在同一项目目录。
 2. 在 macOS 上双击项目根目录的 **`start.command`**，保持打开的终端窗口运行。首次启动等待终端显示启动地址。
 3. 在浏览器打开 **[http://127.0.0.1:8787](http://127.0.0.1:8787)**。
 4. 使用完毕后，在终端按 **Control+C** 停止服务。
@@ -23,7 +25,7 @@ LocalDeal 是一个可在电脑上运行的餐饮门店、点评与数字优惠�
 python3 -B run.py
 ```
 
-完整上传后，也可先克隆仓库，再在该目录执行启动命令：
+配置有访问权限的 Git 命令行认证后，也可先克隆私有仓库，再在该目录执行启动命令：
 
 ```sh
 git clone https://github.com/fljt-ai/localdeal-5003.git
@@ -92,7 +94,7 @@ node frontend/tests/http-api.test.js
 node frontend/tests/app-state.test.js
 ```
 
-仓库包含 GitHub Actions 配置，上传后可在 **Actions** 页面检查 Python 3.10/3.14 与 Node 22 的实际运行结果。本机检查通过不代表 GitHub 检查已经执行。
+仓库包含 Python 3.10/3.14 与 Node 22 的 GitHub Actions 配置。2026-10-03，源码提交 [0fe0b27](https://github.com/fljt-ai/localdeal-5003/commit/0fe0b2781bda8a83fb6eed4a09afe9810fc895a4) 的首次 [Project checks #1](https://github.com/fljt-ai/localdeal-5003/actions/runs/37096568279) 已成功完成。该结果仅对应此提交；后续提交的实际结果以 [Actions 页面](https://github.com/fljt-ai/localdeal-5003/actions) 为准。
 
 发现页、优惠、点评、个人收藏、券包和商户订单均按页读取；搜索、地区、类别、评分与订单状态筛选由数据库处理。每页默认 12 家门店或 10 条点评/订单，页面显示完整总数，评分仍来自门店全部点评。初始化只读取摘要和推荐卡片，个人资料导出仍包含本人的全部记录。
 
@@ -102,4 +104,4 @@ node frontend/tests/app-state.test.js
 
 这是运行在本机回环地址的课程演示，已实现最小密码认证、服务端会话和门店权限检查，尚未实现邮箱验证、密码找回、真实支付及公开部署。Python 官方说明 `http.server` 不适合生产环境；本项目不把该服务器作为线上部署方案。[Python HTTP server 文档](https://docs.python.org/3/library/http.server.html)
 
-源码、结构说明和演示指南可用作分析参考；GitHub 仓库已创建，完整上传、远程检查和老师访问验证仍待完成。演示视频和最终课程报告仍未完成。
+源码、结构说明和演示指南可用作分析参考；GitHub 私有仓库已完整上传，首次源码自动检查成功。组员邀请、老师访问验证、演示视频和最终课程报告仍未完成。

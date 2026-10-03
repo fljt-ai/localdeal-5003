@@ -4,7 +4,7 @@
 
 [GitHub repository](https://github.com/fljt-ai/localdeal-5003) · [中文启动指南](README.zh-CN.md) · [Architecture](docs/ARCHITECTURE.md) · [API](docs/API.md) · [Demo guide](docs/DEMO-GUIDE.md)
 
-The GitHub repository has been created. Complete source upload and remote checks are still pending.
+The complete 65-file source tree has been uploaded to the verified **Private** GitHub repository. Repository access requires an authorized GitHub account; group invitations and teacher access have not yet been configured.
 
 LocalDeal helps customers discover fictional Hong Kong restaurants, save favorites, share reviews and purchase simulated dining vouchers. Authorized store staff can inspect their branch orders and redeem vouchers. A vanilla JavaScript frontend connects to a Python HTTP backend and a persistent SQLite database.
 
@@ -26,7 +26,7 @@ All restaurant details, accounts and transactions are fictional. Payments are si
 
 Use **Python 3.10 or later**. Running the app needs only Python's standard library; no frontend build step or package installation is required.
 
-1. Once the source upload is complete, download and extract the [repository](https://github.com/fljt-ai/localdeal-5003), or clone it with the commands below. The prepared local source package can be used in the meantime.
+1. Sign in to GitHub with repository access, then download and extract the [repository](https://github.com/fljt-ai/localdeal-5003), or clone it with the commands below using authenticated Git access. The prepared local source package can also be used.
 2. Open a terminal in the project root, beside `run.py`.
 3. Run:
 
@@ -41,7 +41,7 @@ On Windows, use `py -3 -B run.py` if that is your Python launcher. On macOS, you
 
 Use `python3 -B run.py --port 8788` if the default port is occupied. `--db /path/to/copy.db` selects a separate database, and `--verbose` logs HTTP requests. On systems where Python has no IANA time-zone data, install the `tzdata` package to provide the `Asia/Hong_Kong` time zone; see the [Python time-zone documentation](https://docs.python.org/3/library/zoneinfo.html#data-sources).
 
-After the upload is complete, clone the source and enter its project directory:
+With authenticated Git access to the private repository, clone the source and enter its project directory:
 
 ```sh
 git clone https://github.com/fljt-ai/localdeal-5003.git
@@ -108,7 +108,7 @@ node frontend/tests/app-state.test.js
 
 The tests create temporary databases and preserve the running demo database. On 2026-10-03, **18 database tests, 26 HTTP tests and both frontend check scripts passed locally**. See the [application validation](database/docs/VALIDATION.md) and [frontend validation](frontend/docs/FRONTEND-CHECKS.md) for exact coverage and browser checks.
 
-[GitHub Actions](.github/workflows/checks.yml) is configured for Python 3.10/3.14 and Node 22 on Ubuntu. Its remote results remain pending while source upload is completed; local results do not establish that the GitHub jobs have run. The workflow follows GitHub's [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
+[GitHub Actions](.github/workflows/checks.yml) is configured for Python 3.10/3.14 and Node 22 on Ubuntu. On 2026-10-03, the initial [Project checks run #1](https://github.com/fljt-ai/localdeal-5003/actions/runs/37096568279) completed successfully for source commit [0fe0b27](https://github.com/fljt-ai/localdeal-5003/commit/0fe0b2781bda8a83fb6eed4a09afe9810fc895a4). This result applies to that commit; see [Actions](https://github.com/fljt-ai/localdeal-5003/actions) for later runs. The workflow follows GitHub's [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
 
 ## Evaluation
 
@@ -131,7 +131,9 @@ Raw JSON samples and figures are included. Recreating plots optionally requires 
 
 See [contributing](CONTRIBUTING.md), the [group contribution record](docs/CONTRIBUTIONS.md), [publication instructions](docs/GITHUB-PUBLISH.md) and [project status](docs/PROJECT-STATUS.md).
 
-The final course delivery still needs the confirmed 4–8 group members and undergraduate majors, actual contributions, complete source upload and verified teacher access to the [repository](https://github.com/fljt-ai/localdeal-5003), a 5–8 minute demonstration video and the final `XXXX-report.pdf`. This README is the runnable-code guide, not the final course report. Codex assistance is recorded in the contribution document for the group to review and disclose according to course rules.
+Group members should use their own GitHub accounts. After their accounts are confirmed, the owner can invite them through **Settings → Collaborators → Add people**. Collaborators on a personal private repository have both read and write access; teacher access must also be arranged and verified before submission. See GitHub's [collaborator invitation guide](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository) and [personal repository permissions](https://docs.github.com/en/enterprise-cloud%40latest/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/permission-levels-for-a-personal-account-repository).
+
+The final course delivery still needs the confirmed 4–8 group members and undergraduate majors, actual contributions, verified teacher access to the [repository](https://github.com/fljt-ai/localdeal-5003), a 5–8 minute demonstration video and the final `XXXX-report.pdf`. This README is the runnable-code guide, not the final course report. Codex assistance is recorded in the contribution document for the group to review and disclose according to course rules.
 
 ## Credits and scope
 
