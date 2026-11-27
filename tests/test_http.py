@@ -11,6 +11,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import HTTPCookieProcessor, ProxyHandler, Request, build_opener
@@ -517,6 +518,32 @@ class HTTPTests(unittest.TestCase):
         for path in blocked:
             with self.subTest(path=path):
                 self.error(self.client.request('GET', path), 404, 'NOT_FOUND')
+
+    def test_static_content_types_are_independent_of_os_mime_registry(self):
+        expected = {
+            '/': 'text/html; charset=utf-8',
+            '/index.html': 'text/html; charset=utf-8',
+            '/styles.css': 'text/css; charset=utf-8',
+            '/src/i18n.js': 'text/javascript; charset=utf-8',
+            '/src/http-api.js': 'text/javascript; charset=utf-8',
+            '/src/app.js': 'text/javascript; charset=utf-8',
+            '/assets/favicon.svg': 'image/svg+xml; charset=utf-8',
+            '/assets/burger.jpg': 'image/jpeg',
+            '/assets/dumplings.jpg': 'image/jpeg',
+            '/assets/coffee.jpg': 'image/jpeg',
+        }
+        with patch('mimetypes.guess_type', return_value=('text/plain', None)):
+            for path, content_type in expected.items():
+                for method in ('GET', 'HEAD'):
+                    with self.subTest(path=path, method=method):
+                        status, body, headers = self.client.request(method, path)
+                        self.assertEqual(status, 200)
+                        self.assertEqual(headers.get('Content-Type'), content_type)
+                        self.assertEqual(headers.get('X-Content-Type-Options'), 'nosniff')
+                        if method == 'HEAD':
+                            self.assertEqual(body, b'')
+                        else:
+                            self.assertTrue(body)
 
     def test_api_unknown_routes_options_and_unsupported_methods_return_json(self):
         self.error(self.client.request('GET', '/api/unknown'), 404, 'NOT_FOUND')
