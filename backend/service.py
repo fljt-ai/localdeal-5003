@@ -300,6 +300,11 @@ def stores_page(connection, session, query, favorites=False):
                 'price':'s.price_per_person_cents,s.store_id'}[sort]
     with read_snapshot(connection):
         total = connection.execute('SELECT count(*)'+STORE_FROM+where,parameters).fetchone()[0]
+        if sort=='recommended' and not favorites:
+            from .insights import ranked_stores, recommendation
+            rows=ranked_stores(connection,user_id,where,parameters,limit,offset)
+            return page_result([{**store_object(connection,row),'recommendation':recommendation(row)}
+                                for row in rows],total,limit,offset)
         # The base WHERE is applied before these store-specific indexed review
         # subqueries. No global store_summary aggregate or all-review Python scan.
         rows = connection.execute(STORE_SELECT+STORE_FROM+where+' ORDER BY '+ordering+' LIMIT ? OFFSET ?',

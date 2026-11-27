@@ -47,6 +47,8 @@
 
 地区及类别接受编号或名称；前端使用启动数据中的编号。门店排序为 `recommended`、`rating` 或 `price`；优惠筛选参数为字符串 `true`/`false`。
 
+新版发现页推荐卡片提供 `recommendation` 分数、四个分项与理由。`getGroupMatch({members,district,limit,offset})` 将成员数组序列化为 JSON 查询参数；响应包含分页和 `groupMatch`。`getMerchantAnalytics({storeId,days})` 读取授权门店汇总、7/30 天趋势、库存和排行。详细定义见 [API 文档](../../docs/API.md) 与 [智能功能设计](../../docs/SMART-FEATURES.md)。
+
 门店卡包含 `averageRating`、`reviewCount`、`isFavorite` 和嵌套 `coupon`（可能为空）。门店列表不加载菜单。单张优惠含服务端计算的 `isPurchasable`；优惠、点评及订单列表同时提供 `storeName`、`storeDistrict`、`storeImage`，因此无需下载所有门店再关联。
 
 单店点评分页额外提供 `ownReview`，独立于当前页及星级筛选。用户即使没有在这一页看到自己的点评，也能直接修改已有点评。门店平均分和总点评数取自服务器全部记录，不以这一页的点评重新计算。

@@ -32,7 +32,8 @@ const last=()=>calls.at(-1);
     ['getMyReviews',[{limit:10,offset:20}],'/api/users/me/reviews'],
     ['getMyFavorites',[{limit:12,offset:12}],'/api/users/me/favorites'],
     ['getOrders',[{status:'expired',limit:10,offset:10}],'/api/orders'],
-    ['getMerchantOrders',[{storeId:'s2',status:'redeemed',limit:10,offset:20}],'/api/merchant/orders']
+    ['getMerchantOrders',[{storeId:'s2',status:'redeemed',limit:10,offset:20}],'/api/merchant/orders'],
+    ['getMerchantAnalytics',[{storeId:'s2',days:7}],'/api/merchant/analytics']
   ];
   nextPayload={data:{items:[],total:99,limit:10,offset:20,hasMore:true}};
   for(const [method,args,route]of methods) {
@@ -45,6 +46,11 @@ const last=()=>calls.at(-1);
     assert.equal(last().options.cache,'no-store');
     assert.equal(last().options.headers['X-CSRF-Token'],undefined);
   }
+  await api.getStoreReviews('branch/一',{rating:5,sort:'new',limit:10,offset:30});
+  const members=[{budget:100,category:'cat-coffee'},{budget:120,category:''}];
+  await api.getGroupMatch({members,district:'central',limit:12,offset:0});
+  const grouping=new URL(last().url,'http://127.0.0.1');
+  assert.equal(grouping.pathname,'/api/group-match');assert.deepEqual(JSON.parse(grouping.searchParams.get('members')),members);
   await api.getStoreReviews('branch/一',{rating:5,sort:'new',limit:10,offset:30});
   assert.equal(last().url,'/api/stores/branch%2F%E4%B8%80/reviews?rating=5&sort=new&limit=10&offset=30');
   await api.getStore('branch/一');assert.equal(last().url,'/api/stores/branch%2F%E4%B8%80');

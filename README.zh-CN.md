@@ -2,17 +2,21 @@
 
 [English project overview](README.md)
 
-GitHub 仓库 [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003) 已验证为私有，完整 65 个源码文件已上传，本地使用 `main` 分支。私有仓库需要获授权的 GitHub 账号才能访问，组员邀请及老师访问尚未配置。协作方式见 [组员修改说明](CONTRIBUTING.md)，上传与后续维护见 [GitHub 发布指南](docs/GITHUB-PUBLISH.md)，成员姓名及实际贡献待填写到 [贡献记录](docs/CONTRIBUTIONS.md)。
+GitHub 仓库 [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003) 已于 2026-11-26 改为公开。11 月升级版增加推荐、聚餐匹配、经营分析、事务并发评价及中英文界面，见 [智能功能设计](docs/SMART-FEATURES.md)。协作见 [组员修改说明](CONTRIBUTING.md)，成员姓名及真实贡献待填写到 [贡献记录](docs/CONTRIBUTIONS.md)。
 
-组员应使用各自的 GitHub 账号。确认账号后，仓库所有者可在 **Settings → Collaborators → Add people** 邀请组员；个人账号的私有仓库协作者同时拥有读取和修改权限。老师的访问方式也需要在提交前另行确认和验证。步骤及权限见 [GitHub 邀请说明](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository) 和 [个人仓库权限说明](https://docs.github.com/en/enterprise-cloud%40latest/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/permission-levels-for-a-personal-account-repository)。
+公开仓库可以直接读取或下载。组员需要直接修改时，仓库所有者可在 **Settings → Collaborators → Add people** 邀请其 GitHub 账号。提交前核对老师可访问最终版本。步骤见 [GitHub 邀请说明](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository)。
 
 LocalDeal 是一个可在电脑上运行的餐饮门店、点评与数字优惠券课程项目。网页已经连接 Python HTTP 后端与 SQLite 数据库，支持密码登录、注册、收藏、点评、模拟购买，以及获授权商户的核销。所有门店和示例账号均为虚构资料；购买使用模拟支付。
 
+新版重点：登录后按兴趣、评分、地区和有效折扣生成有解释的推荐；聚餐匹配支持 2–8 位成员，预算必须全部满足，按最低满意度优先排序；商户经营看板计算 7/30 日销售和核销、分店排行、库存补充建议和每日统计。所有功能使用现有 SQLite 表查询。实际效果：[推荐](docs/images/personalized-recommendation.png) · [聚餐](docs/images/group-match.png) · [商户看板](docs/images/merchant-analytics.png)。
+
 ## 启动应用
+
+默认使用英文界面。右上角语言下拉框可以选择 **English / 简体中文**，无需重新登录；刷新后自动保留语言选择。示例门店、菜单、优惠、提示、推荐与看板全部按选择显示，用户填写的昵称和点评保留原文。常用英文搜索词（例如 coffee、burger、Central）可转换为相应的数据库关键词。
 
 需要 **Python 3.10 或以上**，无需安装第三方 Python 包、Node.js 或前端构建工具。
 
-1. 使用有仓库访问权限的 GitHub 账号登录，从 [GitHub 仓库](https://github.com/fljt-ai/localdeal-5003) 下载并解压源码；也可解压已准备的源码包。保持 `frontend`、`backend`、`database` 等文件夹在同一项目目录。
+1. 解压源码包；也可从 [GitHub 仓库](https://github.com/fljt-ai/localdeal-5003) 下载。双语言升级版包含 `frontend/src/i18n.js`。保持 `frontend`、`backend`、`database` 等文件夹在同一项目目录。
 2. 在 macOS 上双击项目根目录的 **`start.command`**，保持打开的终端窗口运行。首次启动等待终端显示启动地址。
 3. 在浏览器打开 **[http://127.0.0.1:8787](http://127.0.0.1:8787)**。
 4. 使用完毕后，在终端按 **Control+C** 停止服务。
@@ -25,7 +29,15 @@ LocalDeal 是一个可在电脑上运行的餐饮门店、点评与数字优惠�
 python3 -B run.py
 ```
 
-配置有访问权限的 Git 命令行认证后，也可先克隆私有仓库，再在该目录执行启动命令：
+推荐录制视频或组员体验时使用丰富示例模式：
+
+```sh
+python3 -B run.py --smart-demo
+```
+
+第一次运行创建独立的 `database/localdeal-smart.db`，包含 114 笔虚构订单和 78 条点评，可展示 7/30 日销售趋势及低库存提示。已存在的数据库不会重建，也不会修改普通启动的 `database/localdeal.db`。Windows 把 `python3` 换成 `py -3` 即可。
+
+也可克隆当前公开仓库，再在该目录执行启动命令：
 
 ```sh
 git clone https://github.com/fljt-ai/localdeal-5003.git
@@ -85,7 +97,7 @@ python3 -B -m unittest discover -s database/tests -v
 python3 -B -m unittest discover -s tests -v
 ```
 
-测试使用临时数据库，不修改应用当前保存的资料。2026-10-03 验证结果为核心数据库 18 项、HTTP 应用 26 项全部通过；已实际重启服务并确认业务数据保留。具体范围见 [应用验证记录](database/docs/VALIDATION.md) 与 [前端验证记录](frontend/docs/FRONTEND-CHECKS.md)。
+测试使用临时数据库，不修改应用当前保存的资料。2026-11-27 验证结果为 18 项核心数据库、29 项 HTTP 应用、1 项丰富演示数据生成及两个前端检查脚本通过。具体范围见 [智能功能设计](docs/SMART-FEATURES.md) 及 [应用验证记录](database/docs/VALIDATION.md)。
 
 前端行为检查可选用 Node.js 18 或以上运行，无需安装 npm 包：
 
@@ -98,10 +110,10 @@ node frontend/tests/app-state.test.js
 
 发现页、优惠、点评、个人收藏、券包和商户订单均按页读取；搜索、地区、类别、评分与订单状态筛选由数据库处理。每页默认 12 家门店或 10 条点评/订单，页面显示完整总数，评分仍来自门店全部点评。初始化只读取摘要和推荐卡片，个人资料导出仍包含本人的全部记录。
 
-2026-10-03 已完成索引对照及分页前后的三档模拟数据评价，最大一档有 100,000 条点评及 50,000 个订单。首页返回体积从约 28.64 MiB 降到约 11.04 KiB；同范围的数据组装与 JSON 编码中位耗时从约 325.22 ms 降到 2.79 ms。这些是本机模拟读取，排除网络及浏览器时间。原始测量、可复现脚本与图表见 [性能评价](evaluation/README.md)。
+2026-11-27 增加推荐评分后重新测量三档数据；最大规模首页由约 28.64 MiB 降至 13.24 KiB，组装与编码中位数由 339.94 ms 降至 27.25 ms。新推荐比旧编号排序耗时高，但返回量仍受分页控制。事务实验 15 次、每次 100 个模拟买家和 10 张券，均只售出 10 张且无超卖。详见 [性能评价](evaluation/README.md)。这些是本机实验，不是实际网络或生产承载能力。
 
 ## 当前范围
 
 这是运行在本机回环地址的课程演示，已实现最小密码认证、服务端会话和门店权限检查，尚未实现邮箱验证、密码找回、真实支付及公开部署。Python 官方说明 `http.server` 不适合生产环境；本项目不把该服务器作为线上部署方案。[Python HTTP server 文档](https://docs.python.org/3/library/http.server.html)
 
-源码、结构说明和演示指南可用作分析参考；GitHub 私有仓库已完整上传，首次源码自动检查成功。组员邀请、老师访问验证、演示视频和最终课程报告仍未完成。
+源码、结构说明和演示指南可用作分析参考。升级版已通过 18 项核心数据库、29 项 HTTP、1 项丰富演示数据生成及两个前端检查脚本，实际页面完成推荐、聚餐、经营分析和语言切换的操作核对。远程检查结果以 GitHub Actions 对应提交为准；演示视频、成员实际贡献与最终课程报告仍待完成。

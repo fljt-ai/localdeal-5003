@@ -1,29 +1,30 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#172b26">
-  <meta name="description" content="LocalDeal 本地课程演示：商户点评与数字优惠券，采用 SQLite 持久化与模拟支付。">
-  <title>LocalDeal · 发现身边好店</title>
+  <meta name="description" content="LocalDeal: smart dining recommendations, group dining and merchant analytics with simulated vouchers.">
+  <title>LocalDeal · Discover</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <script src="src/i18n.js" defer></script>
   <script src="src/http-api.js" defer></script>
   <script src="src/app.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳到主要内容</a>
+  <a class="skip-link" href="#main" id="skip-link">Skip to main content</a>
   <div class="app-shell">
-    <aside id="sidebar" class="sidebar" aria-label="主要导航"></aside>
+    <aside id="sidebar" class="sidebar" aria-label="Main navigation"></aside>
     <div class="workspace">
       <header id="header" class="topbar"></header>
-      <main id="main" tabindex="-1"><div class="loading">正在准备你的本地好店…</div></main>
-      <footer class="page-footer"><span>LocalDeal © 2026</span><span>本地课程演示 · SQLite 持久化 · 模拟支付</span></footer>
+      <main id="main" tabindex="-1"><div class="loading">Loading LocalDeal…</div></main>
+      <footer class="page-footer"><span>LocalDeal © 2026</span><span id="footer-note">Local course demo · SQLite persistence · Simulated payments</span></footer>
     </div>
   </div>
-  <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航"></nav>
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation"></nav>
   <dialog id="modal" aria-labelledby="modal-title"></dialog>
   <div id="toasts" class="toasts" role="status" aria-live="polite" aria-atomic="true"></div>
-  <noscript>请开启浏览器 JavaScript，以使用 LocalDeal。</noscript>
+  <noscript>Enable JavaScript to use LocalDeal. / 请开启浏览器 JavaScript。</noscript>
 </body>
 </html>

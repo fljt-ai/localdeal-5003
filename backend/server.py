@@ -19,13 +19,13 @@ import time
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from database import operations
-from . import service
+from . import service, insights
 from .database import DEFAULT_DB, ROOT, initialize_database
 
 COOKIE_NAME = 'localdeal_session'
 MAX_BODY = 16384
 FRONTEND = ROOT / 'frontend'
-STATIC_PATHS = {'/','/index.html','/styles.css','/src/app.js','/src/http-api.js',
+STATIC_PATHS = {'/','/index.html','/styles.css','/src/app.js','/src/http-api.js','/src/i18n.js',
                 '/assets/favicon.svg','/assets/burger.jpg','/assets/dumplings.jpg','/assets/coffee.jpg'}
 
 
@@ -223,12 +223,16 @@ class Handler(BaseHTTPRequestHandler):
                         'csrfToken':session['csrf_token'] if session else None},200,None
             if path == '/api/stores':
                 return service.stores_page(connection,session,query),200,None
+            if path == '/api/group-match':
+                return insights.group_match(connection,session,query),200,None
             if path == '/api/users/me/favorites':
                 return service.stores_page(connection,session,query,favorites=True),200,None
             if path == '/api/users/me/reviews':
                 return service.reviews_page(connection,session,query,own=True),200,None
             if path == '/api/merchant/orders':
                 return service.orders_page(connection,session,query,merchant=True),200,None
+            if path == '/api/merchant/analytics':
+                return insights.merchant_analytics(connection,session,query),200,None
             store_match = re.fullmatch(r'/api/stores/([^/]+)(/(menu|reviews))?',path)
             if store_match:
                 identifier, _, sub = store_match.groups()
