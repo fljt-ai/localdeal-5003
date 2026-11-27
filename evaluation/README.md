@@ -2,6 +2,14 @@
 
 本目录包含独立的模拟数据实验。实验只在临时目录创建数据库，不打开、不修改运行中的 `database/localdeal.db`，也不会改变已有账号、点评、订单或核销记录。
 
+## 2026-11-27 智能功能升级评价
+
+- [新版分页及推荐评分报告](results/insights-pagination-2026-11-27/summary.md)：相同三档规模和 30 次重复测量，但纳入新版评分和解释字段。最大规模首页数据从 28.64 MiB 降至 13.24 KiB，组装与编码中位数由 339.94 ms 降至 27.25 ms。新推荐在分页前排序全部匹配候选，因此有额外成本；10 月 3 日的 2.79 ms 是历史编号排序结果，不代表当前实现。
+- [事务并发报告](results/transactions-2026-11-27-125150/summary.md)：1、8、32 个线程，每档 5 次，每次 100 位模拟买家与 10 张库存。每次售出 10、售罄 90、忙等待失败 0，库存为 0，重复请求返回原订单。高并发增加写锁等待，不能声称 SQLite 吞吐随线程数线性增加。
+- [新版分页图](results/insights-pagination-2026-11-27/pagination-comparison.png) · [事务实验图](results/transactions-2026-11-27-125150/transaction-contention.png)。复现：`python3 -B evaluation/transaction_benchmark.py`，`python3 -B evaluation/pagination_benchmark.py`。绘图可选用 `python3 -B evaluation/plot_results.py <results.json>`。
+
+以下保留 10 月实验原始结果和当时实现背景。
+
 ## 原始索引对照（分页前）
 
 2026-10-03 在本机完成三档规模、七个查询案例的 21 组索引对照。最大一档包含 20,000 个模拟用户、2,000 家模拟门店、100,000 条点评与 50,000 个订单。每个查询在两种索引条件下各测量 30 次，返回结果一致，外键、完整性、生成数量及库存与售出数检查通过。

@@ -11,6 +11,32 @@ os.environ.setdefault('MPLCONFIGDIR',cache.name)
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import statistics
+
+
+def transaction_figures(data, output):
+    groups={n:[r for r in data['scenarios'] if r['workers']==n] for n in (1,8,32)}
+    labels=[str(n) for n in groups]
+    fig,axes=plt.subplots(1,2,figsize=(10.5,4.8),layout='constrained')
+    ax=axes[0]
+    for field,color,label in [('successful','#1d5545','Purchased'),('sold_out','#c0c9be','Sold out'),('busy','#c88838','Database busy')]:
+        values=[statistics.mean(r[field] for r in rows) for rows in groups.values()]
+        if field=='successful':bottom=[0]*3
+        elif field=='sold_out':bottom=[statistics.mean(r['successful'] for r in rows) for rows in groups.values()]
+        else:bottom=[statistics.mean(r['successful']+r['sold_out'] for r in rows) for rows in groups.values()]
+        ax.bar(labels,values,bottom=bottom,label=label,color=color,width=.54)
+    ax.set_ylim(0,110);ax.set_ylabel('Outcomes per 100 attempts (mean)');ax.set_xlabel('Concurrent workers');ax.legend(loc='upper center',fontsize=8)
+    ax=axes[1]
+    values=[statistics.median(r['p95_ms'] for r in rows) for rows in groups.values()]
+    bars=ax.bar(labels,values,color='#1d5545',width=.54)
+    ax.set_yscale('log');ax.set_ylabel('Median run p95 latency (ms, log scale)');ax.set_xlabel('Concurrent workers')
+    for bar,value in zip(bars,values):ax.annotate(f'{value:.2f}',(bar.get_x()+bar.get_width()/2,value),xytext=(0,5),textcoords='offset points',ha='center',fontsize=9)
+    ax.set_ylim(min(values)/2,max(values)*2)
+    for ax in axes:ax.grid(axis='y',alpha=.18);ax.set_axisbelow(True)
+    fig.suptitle('LocalDeal: transaction correctness under simulated contention',fontsize=13)
+    fig.supxlabel(f"{len(data['scenarios'])} independent runs; 10 initial vouchers; local SQLite operation, not HTTP or production capacity.",fontsize=8)
+    for ext in ('png','svg'):fig.savefig(output/f'transaction-contention.{ext}',dpi=190,bbox_inches='tight')
+    plt.close(fig)
 
 
 def pagination_figures(data, output):
@@ -52,6 +78,10 @@ def main():
     args = parser.parse_args()
     data = json.loads(args.results.read_text())
     output = args.results.parent
+    if 'scenarios' in data:
+        transaction_figures(data,output)
+        print(f'Figures saved to {output.resolve()}')
+        return
     runs = data['scales']
     if 'homepage' in runs[0]:
         pagination_figures(data,output)

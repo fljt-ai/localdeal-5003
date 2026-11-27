@@ -142,7 +142,7 @@ def main():
               'environment':{'python':platform.python_version(),'sqlite':__import__('sqlite3').sqlite_version,
                              'platform':platform.platform()},
               'source_sha256':{str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest()
-                               for path in (ROOT/'backend/service.py',ROOT/'evaluation/baseline_guest.py')},
+                               for path in (ROOT/'backend/service.py',ROOT/'backend/insights.py',ROOT/'evaluation/baseline_guest.py')},
               'scales':[]}
     rng = random.Random(args.seed)
     with tempfile.TemporaryDirectory(prefix='localdeal-pagination-evaluation-') as directory:
