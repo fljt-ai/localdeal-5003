@@ -1,6 +1,6 @@
 # LocalDeal HTTP API
 
-本文对应 `backend/server.py`、`backend/service.py` 与 `frontend/src/http-api.js` 的当前实现。默认根地址为 `http://127.0.0.1:8787`，服务仅绑定本机回环地址。前端由同一服务提供，没有跨域 API 配置。
+本文对应 `backend/fastapi_app.py`、`backend/controller.py`、`backend/service.py` 与 `frontend/src/http-api.js`。FastAPI 启动后可打开 `/docs` 和 `/openapi.json`；兼容后端共享业务接口。默认根地址为 `http://127.0.0.1:8787`，服务仅绑定本机回环地址。前端由同一服务提供，没有跨域 API 配置。
 
 ## 格式与会话
 
@@ -40,6 +40,10 @@
 `q` 最多 100 个字符，查询门店名称、英文名、类别名称、地区名称、可售菜单名称及标签；搜索中的 `%`、`_` 和反斜杠按文字处理。`district` 与 `category` 可以使用对应编号或名称。`couponOnly=true` 只保留有可购买优惠的门店，默认 `false`。`sort` 为 `recommended`、`rating` 或 `price`：推荐按 SQL 分数降序，评分按平均分降序，人均价格按金额升序；同分或同价时按门店编号升序。收藏分页的默认排序仍按门店编号。推荐卡片除了标准字段，还含 `recommendation:{score,personalized,reasons,components}`，分数及分项均为 0–100。筛选在 SQL 中先限定门店，评分从符合条件门店的全部点评计算，与当前点评页无关。
 
 聚餐接口的每位成员预算必须是 1–10000 港元整数，类别使用有效类别编号或空字符串（不限），共同地区使用有效地区编号或空字符串。拒绝不符合约定的输入（400/INVALID_GROUP），不储存成员输入。每张卡片的 `groupMatch` 含 `matchedMembers,memberCount,worstScore,meanScore,budgetLimit`；分页附加 `memberCount,budgetLimit`。完整模型见 [智能功能设计](SMART-FEATURES.md)。
+
+## 商户库存调整
+
+`PATCH /api/merchant/coupons/:id/stock` 接收 `{stock, expectedStock}` 两个 0–100000 整数，分别为目标可售库存与页面读取的旧库存。只允许指定门店有效的 `owner` 或 `manager` 角色。成功返回更新后的优惠对象；非授权账号为 403；旧库存与当前库存不同为 409 / STOCK_CHANGED，客户端需重新读取后确认。事务同时修改 `available_stock` 与 `total_stock`，保持二者差额（已售数量）不变，已购订单和核销记录不受影响。`GET /api/merchant/analytics` 额外返回 `canAdjustStock`，供页面决定是否显示管理入口。
 
 所有分页接口的 `data` 使用统一结构：
 
