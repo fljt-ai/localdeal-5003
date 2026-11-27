@@ -506,7 +506,7 @@ class HTTPTests(unittest.TestCase):
         root = self.client.request('GET', '/')
         self.assertEqual(root[0], 200)
         self.assertIn(b'LocalDeal', root[1])
-        for allowed in ('/styles.css', '/src/app.js', '/src/http-api.js', '/assets/favicon.svg'):
+        for allowed in ('/styles.css', '/src/app.js', '/src/http-api.js', '/src/i18n.js', '/assets/favicon.svg'):
             with self.subTest(allowed=allowed):
                 self.assertEqual(self.client.request('GET', allowed)[0], 200)
         blocked = ['/database/localdeal.db', '/database/localdeal.db-wal', '/database/localdeal.db-shm',
@@ -584,7 +584,7 @@ class HTTPTests(unittest.TestCase):
         alex = self.authenticated()
         recommended = self.pages(alex, '/api/stores?sort=recommended')
         self.assertEqual(len(recommended), 36)
-        self.assertEqual([s['id'] for s in recommended], sorted(s['id'] for s in recommended))
+        self.assertEqual([s['id'] for s in recommended], [s['id'] for s in sorted(recommended,key=lambda s:(-s['recommendation']['score'],s['id']))])
         self.assertTrue(all(s['menu'] == [] for s in recommended))
         by_id = {s['id']: s for s in recommended}
         self.assertTrue(by_id['s1']['isFavorite'])
@@ -600,7 +600,7 @@ class HTTPTests(unittest.TestCase):
         for query, expected in cases:
             with self.subTest(query=query):
                 page = self.page(self.client.request('GET', '/api/stores?' + urlencode({'q': query})))
-                self.assertEqual([s['id'] for s in page['items']], expected)
+                self.assertEqual(sorted(s['id'] for s in page['items']), sorted(expected))
         self.assertEqual(self.page(self.client.request('GET', '/api/stores?' + urlencode({'q': '西式餐厅'})))['total'], 32)
         self.assertEqual(self.page(self.client.request('GET', '/api/stores?' + urlencode({'q': '中环'})))['total'], 32)
         for sort in ('price', 'rating'):
@@ -620,6 +620,89 @@ class HTTPTests(unittest.TestCase):
         offers = self.page(self.client.request('GET', '/api/coupons?storeId=z-page-store-00&limit=1'))
         self.assertEqual(offers['total'], 2)
         self.assertTrue(offers['hasMore'])
+
+    def test_explainable_recommendations_use_current_members_history(self):
+        guest=self.page(self.client.request('GET','/api/stores'))['items']
+        self.assertTrue(all(not s['recommendation']['personalized'] for s in guest))
+        newcomer=Client(self.base)
+        self.data(newcomer.register('New','recommendation@example.com'),201)
+        before=self.page(newcomer.request('GET','/api/stores'))['items']
+        self.assertEqual([(s['id'],s['recommendation']) for s in before],[(s['id'],s['recommendation']) for s in guest])
+        self.data(newcomer.request('POST','/api/favorites/toggle',{'storeId':'s1'}))
+        after=self.page(newcomer.request('GET','/api/stores'))['items']
+        self.assertTrue(all(s['recommendation']['personalized'] for s in after))
+        by_id={s['id']:s['recommendation'] for s in after}
+        self.assertEqual(by_id['s1']['components']['interest'],100)
+        self.assertEqual(by_id['s1']['components']['affinity'],100)
+        self.assertEqual(by_id['s6']['components']['interest'],0)
+        self.assertEqual(after[0]['id'],'s1')
+        self.data(newcomer.request('POST','/api/favorites/toggle',{'storeId':'s1'}))
+        reverted=self.page(newcomer.request('GET','/api/stores'))['items']
+        self.assertEqual([(s['id'],s['recommendation']) for s in reverted],[(s['id'],s['recommendation']) for s in guest])
+
+    def test_group_match_budget_fairness_pagination_and_validation(self):
+        def route(members,district='',**params):
+            return '/api/group-match?'+urlencode({'members':json.dumps(members),'district':district,**params})
+        members=[{'budget':150,'category':'cat-western'},{'budget':100,'category':'cat-coffee'}]
+        page=self.page(self.client.request('GET',route(members)))
+        self.assertEqual(page['budgetLimit'],100)
+        expected={r[0] for r in self.sql('SELECT store_id FROM stores WHERE is_active=1 AND price_per_person_cents<=10000')}
+        self.assertEqual({s['id'] for s in page['items']},expected)
+        self.assertTrue(expected)
+        self.assertTrue(all(s['pricePerPerson']<=100 and s['groupMatch']['memberCount']==2 for s in page['items']))
+        worst=[s['groupMatch']['worstScore'] for s in page['items']]
+        self.assertEqual(worst,sorted(worst,reverse=True))
+        paged=self.pages(self.client,route(members))
+        self.assertEqual([s['id'] for s in paged],[s['id'] for s in page['items']])
+        # Independently recompute max-min and mean on a mixed three-person
+        # fixture. This checks more than the monotonicity of the output.
+        mixed=[{'budget':180,'category':'cat-coffee'},{'budget':165,'category':'cat-coffee'},
+               {'budget':200,'category':'cat-asian'}]
+        actual=self.page(self.client.request('GET',route(mixed)))['items']
+        scores={}
+        for row in self.sql('''SELECT s.store_id,s.category_id,s.price_per_person_cents,
+            round(avg(r.rating),1) AS avg_rating,count(r.review_id) AS n
+            FROM stores s LEFT JOIN reviews r USING(store_id) WHERE s.is_active=1 GROUP BY s.store_id'''):
+            if row['price_per_person_cents']>16500:continue
+            rep=((row['avg_rating'] or 3.5)*row['n']+17.5)/(row['n']+5)/5
+            individual=[100*(.65*(m['category']==row['category_id'])+.25*rep+
+                           .10*(1-row['price_per_person_cents']/(m['budget']*100))) for m in mixed]
+            scores[row['store_id']]=(min(individual),sum(individual)/len(individual))
+        self.assertEqual([s['id'] for s in actual],sorted(scores,key=lambda sid:(-scores[sid][0],-scores[sid][1],sid)))
+        for store in actual:
+            self.assertAlmostEqual(store['groupMatch']['worstScore'],scores[store['id']][0],delta=.051)
+            self.assertAlmostEqual(store['groupMatch']['meanScore'],scores[store['id']][1],delta=.051)
+        zone=self.page(self.client.request('GET',route(members,'central')))
+        self.assertTrue(all(s['district']=='中环' for s in zone['items']))
+        empty=self.page(self.client.request('GET',route([{'budget':1,'category':''}]*2)))
+        self.assertEqual(empty['total'],0)
+        for invalid in ([],[{'budget':100,'category':''}]*9,[{'budget':True,'category':''}]*2,[{'budget':100,'category':'unknown'}]*2):
+            self.error(self.client.request('GET',route(invalid)),400,'INVALID_GROUP')
+
+    def test_merchant_analytics_reflects_purchase_redemption_and_scope(self):
+        alex=self.authenticated(); harbor=self.authenticated('harbor.owner@example.com')
+        route='/api/merchant/analytics?storeId=s1&days=7'
+        self.error(self.client.request('GET',route),401)
+        self.error(alex.request('GET',route),403)
+        self.error(harbor.request('GET','/api/merchant/analytics?storeId=s3&days=7'),403)
+        before=self.data(harbor.request('GET',route))
+        self.assertEqual({b['id'] for b in before['branches']},{'s1','s2'})
+        self.assertEqual(len(before['trend']),7)
+        order=self.data(alex.request('POST','/api/orders',{'couponId':'c1','idempotencyKey':'analysis-test'}),201)
+        after=self.data(harbor.request('GET',route))
+        self.assertEqual(after['sold'],before['sold']+1)
+        self.assertAlmostEqual(after['gross'],before['gross']+order['price'])
+        self.assertEqual(after['todaySold'],before['todaySold']+1)
+        self.assertEqual(after['offers'][0]['stock'],before['offers'][0]['stock']-1)
+        self.assertAlmostEqual(after['trend'][-1]['cumulative'],after['gross'])
+        self.assertEqual(after['branches'][0]['sold'],before['branches'][0]['sold']+1)
+        self.assertNotIn('u-demo',json.dumps(after))
+        self.data(harbor.request('POST','/api/orders/redeem',{'storeId':'s1','code':order['code']}))
+        final=self.data(harbor.request('GET',route))
+        self.assertEqual(final['redeemed'],after['redeemed']+1)
+        self.assertEqual(final['unused'],after['unused']-1)
+        self.assertEqual(final['gross'],after['gross'])
+        self.assertEqual(len(self.data(harbor.request('GET','/api/merchant/analytics?storeId=s1&days=30'))['trend']),30)
 
     def test_review_pages_keep_own_review_outside_filters_and_page(self):
         self.paging_fixture()
