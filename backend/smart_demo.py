@@ -10,6 +10,48 @@ from database import operations
 from .database import initialize_database
 
 
+def expand_catalog(db, now, buyers, rng):
+    """Add twelve fictional branches only during fresh rich-demo creation."""
+    branches = [
+        ('s1','central','中环','花园店','Central Garden',145),
+        ('s1','causeway-bay','铜锣湾','广场店','Causeway Bay Plaza',125),
+        ('s2','tsim-sha-tsui','尖沙咀','海景店','Tsim Sha Tsui Harbour',180),
+        ('s2','causeway-bay','铜锣湾','街角店','Causeway Bay Corner',110),
+        ('s3','causeway-bay','铜锣湾','花园店','Causeway Bay Garden',85),
+        ('s3','tsim-sha-tsui','尖沙咀','广场店','Tsim Sha Tsui Plaza',105),
+        ('s4','central','中环','海景店','Central Harbour',115),
+        ('s4','tsim-sha-tsui','尖沙咀','街角店','Tsim Sha Tsui Corner',78),
+        ('s5','central','中环','花园店','Central Garden',65),
+        ('s5','tsim-sha-tsui','尖沙咀','广场店','Tsim Sha Tsui Plaza',95),
+        ('s6','central','中环','海景店','Central Harbour',72),
+        ('s6','causeway-bay','铜锣湾','街角店','Causeway Bay Corner',58),
+    ]
+    for index,(template,district,zh,branch,en,price) in enumerate(branches,7):
+        store,coupon=f's{index}',f'c{index}'
+        row=db.execute('SELECT * FROM stores WHERE store_id=?',(template,)).fetchone()
+        brand=row['name'].split(' · ')[0]
+        db.execute('''INSERT INTO stores(store_id,merchant_id,category_id,district_id,name,english_name,address,hours,
+            description,price_per_person_cents,image_path,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''',
+            (store,row['merchant_id'],row['category_id'],district,f'{brand} · {zh}{branch}',f'{brand} {en}',
+             f'{zh} · {branch}（虚构演示地址）',row['hours'],row['description'],price*100,row['image_path'],row['created_at']))
+        db.execute('INSERT INTO store_staff(store_id,user_id,role) SELECT ?,user_id,role FROM store_staff WHERE store_id=?',(store,template))
+        db.execute('INSERT INTO store_tags(store_id,tag,position) SELECT ?,tag,position FROM store_tags WHERE store_id=?',(store,template))
+        db.execute('''INSERT INTO menu_items(menu_item_id,store_id,name,description,price_cents,position)
+            SELECT ? || position,?,name,description,price_cents,position FROM menu_items WHERE store_id=?''',(f'm-{store}-',store,template))
+        offer=db.execute('SELECT * FROM coupons WHERE store_id=? ORDER BY coupon_id LIMIT 1',(template,)).fetchone()
+        stock=15+(index%5)*5
+        db.execute('''INSERT INTO coupons(coupon_id,store_id,title,description,original_price_cents,price_cents,
+            total_stock,available_stock,expires_on,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)''',
+            (coupon,store,offer['title'],offer['description'],offer['original_price_cents'],offer['price_cents'],stock,stock,
+             (now.date()+timedelta(days=45)).isoformat(),row['created_at']))
+        db.execute('INSERT INTO coupon_terms(coupon_id,position,term) SELECT ?,position,term FROM coupon_terms WHERE coupon_id=?',(coupon,offer['coupon_id']))
+        for i in range(4):
+            created=int((now-timedelta(days=1+i*3)).timestamp())
+            db.execute('INSERT INTO reviews(review_id,store_id,user_id,rating,comment,created_at,updated_at) VALUES (?,?,?,?,?,?,?)',
+                       (f'r-smart-{store}-{i}',store,buyers[(index+i)%len(buyers)],rng.choice((3,4,4,5,5)),
+                        'Fictional demo review: enjoyable meal and good value.',created,created))
+
+
 def create_smart_demo(path):
     path=Path(path).resolve()
     if path.exists():
@@ -56,6 +98,7 @@ def create_smart_demo(path):
                     reviewed=int((now-timedelta(days=1+i*3,hours=2)).timestamp())
                     db.execute('INSERT INTO reviews(review_id,store_id,user_id,rating,comment,created_at,updated_at) VALUES (?,?,?,?,?,?,?)',
                         (f'r-smart-{store}-{i}',store,buyers[i],rng.choice((3,4,4,5,5)),message,reviewed,reviewed))
+            expand_catalog(db,now,buyers,rng)
             assert not db.execute('SELECT 1 FROM coupons c WHERE total_stock-available_stock != (SELECT count(*) FROM orders o WHERE o.coupon_id=c.coupon_id)').fetchone()
             assert db.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
             assert not db.execute('PRAGMA foreign_key_check').fetchall()
