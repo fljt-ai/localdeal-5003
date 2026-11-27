@@ -2,7 +2,7 @@
 
 ## 当前状态
 
-在线仓库 [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003) 已在设置页及首页验证为私有，完整 65 个源码文件已通过 GitHub 网页按原路径上传。组员邀请及老师访问尚未配置。
+在线仓库 [fljt-ai/localdeal-5003](https://github.com/fljt-ai/localdeal-5003) 首次通过网页上传完整 65 个文件，2026-11-26 已在首页验证为 Public。2026-11-27 的智能功能及双语言升级版已在本地验证。公开阅读不需要邀请；直接写入需要授权；以在线最新提交判断下载版本。
 
 2026-10-03，源码提交 [0fe0b27](https://github.com/fljt-ai/localdeal-5003/commit/0fe0b2781bda8a83fb6eed4a09afe9810fc895a4) 的首次 [Project checks #1](https://github.com/fljt-ai/localdeal-5003/actions/runs/37096568279) 已成功完成。该结果仅对应此提交；后续文档或代码提交的结果以 [Actions 页面](https://github.com/fljt-ai/localdeal-5003/actions) 为准。
 
@@ -11,10 +11,10 @@
 仓库已创建为 **`fljt-ai/localdeal-5003`**。上传和交付前核对以下信息：
 
 - **所属账号**：当前仓库所有者为 `fljt-ai`，组员使用自己的 GitHub 账号协作。
-- **可见性**：已验证为 `Private`，仅针对本 LocalDeal 仓库；后续上传保持私有。
-- **老师访问方式**：最终报告中的链接必须让老师能够打开源码和下载文件。需先确认老师使用的 GitHub 账号与访问安排，再另行授权并验证。
+- **可见性**：已验证为 `Public`，仅针对本 LocalDeal 仓库；注意公开源码任何人都可以下载。
+- **老师访问方式**：最终报告中的链接必须让老师能够打开最终源码和下载文件；公开阅读无需提供写权限。
 
-确认组员账号后，所有者可在 **Settings → Collaborators → Add people** 发出邀请，组员接受后才能访问私有仓库。个人账号的私有仓库协作者拥有读取和修改权限，不能仅授予只读协作者权限，因此老师访问也应先确认安排。邀请不会因为上传源码而自动发生。参考 [GitHub 邀请协作者](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository) 和 [个人仓库权限](https://docs.github.com/en/enterprise-cloud%40latest/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/permission-levels-for-a-personal-account-repository)。
+确认组员账号后，所有者可在 **Settings → Collaborators → Add people** 发出写权限邀请。公开读者无需邀请。参考 [GitHub 邀请协作者](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository)。
 
 本项目中的演示账号、商户和订单均为虚构数据。源码包含公开演示密码，运行中的个人数据库和会话文件不会上传。
 
@@ -43,7 +43,7 @@ cd localdeal-5003
 2. 确认 **Actions** 中本次提交的检查完成，并查看失败时的具体原因。
 3. 从 **Code → Download ZIP** 下载，解压到新的目录，按 [README](../README.md) 启动。首次启动会建立该目录自己的示例数据库。
 4. 使用公开演示账号检查登录、搜索、点评、模拟购买和对应商户核销。
-5. 确认仓库可见性保持 **Private**，并用老师应有的访问方式检查仓库链接及授权。
+5. 确认仓库首页为 **Public**，核对老师可访问最终提交和视频链接。
 
 仓库发布源码，应用仍按 README 在本机运行；在线可浏览源码的链接不是网站部署地址。
 

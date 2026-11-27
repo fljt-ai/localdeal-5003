@@ -20,9 +20,11 @@ flowchart LR
 | 部分 | 责任 |
 | --- | --- |
 | `frontend/src/app.js` | 页面、表单、角色入口、筛选及分页状态，成功后重新读取相关摘要和页面 |
+| `frontend/src/i18n.js` | 英文/简体中文显示、既有示例目录翻译和英文搜索别名；语言设置仅存浏览器 |
 | `frontend/src/http-api.js` | 同源请求、JSON、Cookie、内存 CSRF 令牌与超时错误 |
 | `backend/server.py` | 路由、Host/Origin/请求头检查、JSON 限制、响应与静态资源允许列表 |
 | `backend/service.py` | 输入字段允许列表、服务端身份、SQL 范围和筛选、分页及 camelCase 页面对象 |
+| `backend/insights.py` | SQL 个性推荐、临时成员关系与群体公平排序、授权分店经营聚合及窗口函数 |
 | `backend/auth.py` | PBKDF2 密码哈希、恒定时间比较和随机会话凭据 |
 | `backend/database.py` | 缺失数据库初始化、事务迁移与完整性检查 |
 | `database/operations.py` | 购买、核销、点评等核心业务操作和写入事务 |
@@ -92,6 +94,8 @@ Cookie 使用 `SameSite=Strict` 和 `Path=/`。当前仅有本地 HTTP，因此�
 金额以整数港币分保存，服务层转换为港币元。事件时间保存为 UTC Unix 秒，接口返回 ISO 时间字符串；到期日独立保存香港日历日期。`wallet` 通过核销记录与订单到期快照推导待使用、已核销或已过期状态。`store_summary` 作为核心模型视图保留，用于 SQL 演示和原始评价；当前页面使用按所选门店限定的评分查询。`coupon_catalog` 的可购买规则仍由门店状态、优惠状态、库存及香港日期共同决定，当前接口在限定优惠范围的查询中使用同一规则。
 
 ## 验证和边界
+
+2026-11-27 智能升级保持 v2 持久模型不变，增加三个读取功能和独立事务评价。推荐在门店分页的限定候选范围内计算；聚餐输入为临时关系而非持久用户资料；经营分析在读快照中按当前员工授权、香港日历日期和销售快照汇总。SQL 公式、验证和限制见 [SMART-FEATURES.md](SMART-FEATURES.md)。
 
 核心数据库测试在 `database/tests/`，HTTP、会话、权限与分页测试在 `tests/`，均使用临时数据库。页面与真实服务的操作以及重启验证记录于 [验证记录](../database/docs/VALIDATION.md)。评价材料在 `evaluation/`；具体测试结果和实验数据以各自的记录为准。
 

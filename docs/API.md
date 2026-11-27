@@ -29,14 +29,17 @@
 | `GET /api/health` | 服务状态 | `{status:"ok", databaseVersion:2}` |
 | `GET /api/state` | 初始化摘要 | 见下方 bootstrap 结构 |
 | `GET /api/auth/session` | 当前会话 | `{user, csrfToken}`；访客两项为空 |
-| `GET /api/stores` | 可选 `q`、`district`、`category`、`couponOnly`、`sort`、`limit`、`offset` | 活跃门店分页 |
+| `GET /api/stores` | 可选 `q`、`district`、`category`、`couponOnly`、`sort`、`limit`、`offset` | 活跃门店分页；默认有推荐分数与原因 |
+| `GET /api/group-match` | `members` 为 JSON 数组（2–8 个 `{budget,category}`），可选 `district`、`limit`、`offset` | 全员预算和共同地区匹配的门店分页 |
 | `GET /api/stores/:id` | 单家门店 | 门店对象；不存在为 404 |
 | `GET /api/stores/:id/menu` | 门店菜单 | 可售菜单项目数组 |
 | `GET /api/stores/:id/reviews` | 可选 `rating`、`sort`、`limit`、`offset` | 点评分页，另含 `ownReview` |
 | `GET /api/coupons` | 可选 `storeId`、`limit`、`offset` | 优惠分页 |
 | `GET /api/coupons/:id` | 单个优惠 | 优惠对象；不存在为 404 |
 
-`q` 最多 100 个字符，查询门店名称、英文名、类别名称、地区名称、可售菜单名称及标签；搜索中的 `%`、`_` 和反斜杠按文字处理。`district` 与 `category` 可以使用对应编号或名称。`couponOnly=true` 只保留有可购买优惠的门店，默认 `false`。`sort` 为 `recommended`、`rating` 或 `price`：推荐按门店编号升序，评分按平均分降序，人均价格按金额升序；同分或同价时按门店编号升序。筛选在 SQL 中先限定门店，评分从符合条件门店的全部点评计算，与当前点评页无关。
+`q` 最多 100 个字符，查询门店名称、英文名、类别名称、地区名称、可售菜单名称及标签；搜索中的 `%`、`_` 和反斜杠按文字处理。`district` 与 `category` 可以使用对应编号或名称。`couponOnly=true` 只保留有可购买优惠的门店，默认 `false`。`sort` 为 `recommended`、`rating` 或 `price`：推荐按 SQL 分数降序，评分按平均分降序，人均价格按金额升序；同分或同价时按门店编号升序。收藏分页的默认排序仍按门店编号。推荐卡片除了标准字段，还含 `recommendation:{score,personalized,reasons,components}`，分数及分项均为 0–100。筛选在 SQL 中先限定门店，评分从符合条件门店的全部点评计算，与当前点评页无关。
+
+聚餐接口的每位成员预算必须是 1–10000 港元整数，类别使用有效类别编号或空字符串（不限），共同地区使用有效地区编号或空字符串。拒绝不符合约定的输入（400/INVALID_GROUP），不储存成员输入。每张卡片的 `groupMatch` 含 `matchedMembers,memberCount,worstScore,meanScore,budgetLimit`；分页附加 `memberCount,budgetLimit`。完整模型见 [智能功能设计](SMART-FEATURES.md)。
 
 所有分页接口的 `data` 使用统一结构：
 
@@ -113,6 +116,7 @@
 | `GET /api/orders` | 可选 `status=all/unused/redeemed/expired`、`limit`、`offset` | 当前用户订单分页 |
 | `GET /api/orders/:id` | 自己的订单编号 | 当前用户单笔订单；其他人的订单也返回 404 |
 | `GET /api/merchant/orders` | 可选 `storeId`、`status=all/unused/redeemed/expired`、`limit`、`offset` | 授权门店的买家订单分页 |
+| `GET /api/merchant/analytics` | 必填授权 `storeId`，可选 `days=7/30` | 选定门店统计、日期趋势、授权分店排行、优惠库存与当前点评趋势 |
 | `POST /api/orders/redeem` | `{code,storeId}` | 200；返回已核销订单 |
 
 订单对象为：
@@ -132,6 +136,8 @@
 重试使用当前用户与 `idempotencyKey` 的组合：同一优惠返回原订单，不再扣库存；相同标识用于另一个优惠返回 `409 / RETRY_CONFLICT`。不同用户可以使用相同标识。页面在打开购买窗口时创建一次标识，并在该窗口的网络重试中保持它；再次主动打开窗口则产生新标识，可以有意重复购买。同一请求标识已经建立订单后，即使优惠随后售罄，正确重试仍可读取原订单。
 
 核销身份由会话取得，不能提交另一名员工的编号。后端检查员工在所选门店的有效 `store_staff` 关系、券所属门店、购买快照有效期及是否已经核销，记录一条带员工与时间的核销事件。每个订单最多一条核销记录，SQL 触发器也检查门店授权与时间边界。商户负责人身份与员工授权是两个关系，不能仅凭拥有商户名称取得核销权限。
+
+经营分析与订单过滤独立：`days` 默认为 7，含当日；使用香港日历日期与订单购买时金额快照，计算 `sold,gross,redeemed,expired,unused,redemptionRate,todaySold,todayGross`。无销售时核销率为空。`trend` 包含日期、销售张数、金额和累计金额；`offers` 包含销量排行、当前库存、低库存与补充建议；`branches` 仅当前员工的授权门店，`ratingTrend` 统计当前点评按发表日的均分及数量。两个排行最多各 50 条。不含买家信息。没有对应门店员工权限返回 403。
 
 ## 个人导出
 
