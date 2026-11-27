@@ -177,7 +177,8 @@ def merchant_analytics(connection, session, query):
                 'sold':row['sold'],'gross':row['gross']/100,'redeemed':row['redeemed'],'stock':row['available_stock'],
                 'lowStock':valid and row['available_stock']<=5,'active':valid,
                 'suggestedRestock':max(0,math.ceil(3*row['sold']/days)-row['available_stock']) if valid else 0})
-        return {'storeId':store_id,'days':days,'start':start.isoformat(),'end':today.isoformat(),
+        can_adjust=bool(connection.execute("SELECT 1 FROM store_staff WHERE store_id=? AND user_id=? AND is_active=1 AND role IN ('owner','manager')",(store_id,user_id)).fetchone())
+        return {'storeId':store_id,'days':days,'start':start.isoformat(),'end':today.isoformat(),'canAdjustStock':can_adjust,
             'sold':totals['sold'],'gross':totals['gross']/100,'redeemed':totals['redeemed'],
             'expired':totals['expired'],'unused':totals['sold']-totals['redeemed']-totals['expired'],
             'redemptionRate':round(totals['redeemed']*100/totals['sold'],1) if totals['sold'] else None,

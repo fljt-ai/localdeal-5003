@@ -101,6 +101,22 @@
 销售额|Sales
 核销|Redeem
 库存|Stock
+优惠券库存管理|Voucher inventory management
+仅门店所有者和经理可调整|Branch owners and managers only
+调整尚未售出的券数，不影响已售订单和核销记录。|Adjust unsold vouchers without changing purchase or redemption history.
+调整库存|Adjust stock
+新的可售库存|New available stock
+保存库存|Save stock
+库存已更新|Stock updated
+库存必须为 0–100000 的整数。|Stock must be a whole number from 0 to 100,000.
+你没有这项优惠的库存管理权限。|You cannot manage this offer's stock.
+库存已变化，请刷新后重新确认。|Stock changed. Refresh and confirm again.
+输入数据类型或范围无效。|Invalid input type or range.
+花园店| Garden branch
+广场店| Plaza branch
+海景店| Harbour branch
+街角店| Corner branch
+（虚构演示地址）| (fictional demo address)
 低库存|Low stock
 当前门店暂无优惠券。|No vouchers for this branch.
 暂无经营数据。|No analytics data yet.

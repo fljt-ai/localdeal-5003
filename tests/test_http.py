@@ -545,6 +545,25 @@ class HTTPTests(unittest.TestCase):
                         else:
                             self.assertTrue(body)
 
+    def test_merchant_stock_adjustment_preserves_sales_and_requires_current_stock(self):
+        customer=self.authenticated()
+        owner=self.authenticated('harbor.owner@example.com')
+        other=self.authenticated('coffee.owner@example.com')
+        original=self.data(customer.request('GET','/api/coupons/c1'))['stock']
+        old_sold=self.sql("SELECT total_stock-available_stock FROM coupons WHERE coupon_id='c1'")[0][0]
+        path='/api/merchant/coupons/c1/stock'
+        payload={'stock':original+5,'expectedStock':original}
+        self.error(customer.request('PATCH',path,payload),403,'FORBIDDEN')
+        self.error(other.request('PATCH',path,payload),403,'FORBIDDEN')
+        self.assertEqual(self.data(owner.request('PATCH',path,payload))['stock'],original+5)
+        self.error(owner.request('PATCH',path,payload),409,'STOCK_CHANGED')
+        self.error(owner.request('PATCH',path,{'stock':-1,'expectedStock':original+5}),400,'INVALID_STOCK')
+        self.assertEqual(self.data(owner.request('PATCH',path,{'stock':0,'expectedStock':original+5}))['stock'],0)
+        self.assertEqual(self.data(customer.request('GET','/api/coupons/c1'))['stock'],0)
+        self.assertEqual(self.sql("SELECT total_stock-available_stock FROM coupons WHERE coupon_id='c1'")[0][0],old_sold)
+        self.assertEqual(self.sql("SELECT count(*) FROM orders WHERE coupon_id='c1'")[0][0],old_sold)
+        self.assertEqual(self.data(owner.request('GET','/api/merchant/analytics?storeId=s1'))['offers'][0]['stock'],0)
+
     def test_api_unknown_routes_options_and_unsupported_methods_return_json(self):
         self.error(self.client.request('GET', '/api/unknown'), 404, 'NOT_FOUND')
         self.error(self.client.request('OPTIONS', '/api/state'), 405, 'METHOD_NOT_ALLOWED')

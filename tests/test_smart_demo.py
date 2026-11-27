@@ -23,7 +23,9 @@ class SmartDemoTests(unittest.TestCase):
             create_smart_demo(rich)
             with closing(connect(rich)) as db:
                 self.assertEqual(db.execute('SELECT count(*) FROM orders').fetchone()[0],114)
-                self.assertEqual(db.execute('SELECT count(*) FROM reviews').fetchone()[0],78)
+                self.assertEqual(db.execute('SELECT count(*) FROM stores').fetchone()[0],18)
+                self.assertEqual(db.execute('SELECT count(*) FROM coupons').fetchone()[0],18)
+                self.assertEqual(db.execute('SELECT count(*) FROM reviews').fetchone()[0],126)
                 self.assertFalse(db.execute('SELECT 1 FROM coupons c WHERE total_stock-available_stock != (SELECT count(*) FROM orders o WHERE o.coupon_id=c.coupon_id)').fetchone())
                 self.assertEqual(db.execute('PRAGMA integrity_check').fetchone()[0],'ok')
                 self.assertFalse(db.execute('PRAGMA foreign_key_check').fetchall())

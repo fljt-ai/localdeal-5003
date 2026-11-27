@@ -6,4 +6,4 @@ if ! command -v python3 >/dev/null 2>&1; then
   read "?按 Enter 关闭。"
   exit 1
 fi
-python3 -B run.py
+python3 -B run.py --smart-demo

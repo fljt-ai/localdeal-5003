@@ -221,6 +221,20 @@ def get_coupon(connection, coupon_id):
     return coupon_object(connection,row)
 
 
+def adjust_coupon_stock(connection, session, coupon_id, payload):
+    """Authorized owner/manager sets unsold stock without changing sales history."""
+    user_id = require_session(session)
+    fields(payload, ('stock','expectedStock'))
+    stock, expected = payload['stock'], payload['expectedStock']
+    try:
+        operations.adjust_coupon_stock(connection,user_id,coupon_id,stock,expected)
+    except operations.DatabaseRuleError as error:
+        if error.code=='FORBIDDEN':
+            raise APIError(403,'FORBIDDEN','你没有这项优惠的库存管理权限。') from None
+        raise
+    return get_coupon(connection,coupon_id)
+
+
 def store_object(connection, row, detail=False):
     identifier = row['store_id']
     tag_sql = 'SELECT tag FROM store_tags WHERE store_id=? ORDER BY position'
@@ -504,6 +518,8 @@ RULE_MESSAGES = {
     'INVALID_RATING':(400,'评分必须为 1–5 的整数。'), 'INVALID_COMMENT':(400,'点评需为 1–500 个字符。'),
     'STORE_NOT_FOUND':(404,'这家门店不存在。'), 'REVIEW_NOT_FOUND':(404,'这条点评不存在。'),
     'REVIEW_EXISTS':(409,'你已点评这家店，可以修改已有点评。'),
+    'INVALID_STOCK':(400,'库存必须为 0–100000 的整数。'),
+    'STOCK_CHANGED':(409,'库存已变化，请刷新后重新确认。'),
 }
 
 

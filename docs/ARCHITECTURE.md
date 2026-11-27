@@ -1,12 +1,16 @@
 # LocalDeal 架构与模型版本
 
-本应用使用原生 HTML/CSS/JavaScript、Python 3.10+ 标准库和 SQLite。前端与 API 由同一个 `ThreadingHTTPServer` 进程提供，默认仅绑定 `127.0.0.1:8787`；无需包管理器、前端编译或外部数据库服务。
+本应用使用原生 HTML/CSS/JavaScript、FastAPI、Pydantic、Uvicorn 与 SQLite，采用模块化单体分层架构。默认仅绑定 `127.0.0.1:8787`；前端与 API 同源，仍保留标准库 `ThreadingHTTPServer` 兼容入口。两种 HTTP 传输共享 controller/service/repository，无需复制 SQL 业务逻辑。详见 [架构升级](ARCHITECTURE-UPGRADE.md)。
 
 ```mermaid
 flowchart LR
-    B[浏览器页面] -->|同源 fetch / JSON| H[backend/server.py\nHTTP 路由与请求检查]
-    H --> S[backend/service.py\n当前用户与页面数据]
-    H --> A[backend/auth.py\n密码验证与随机凭据]
+    B[浏览器页面] -->|同源 fetch / JSON| H[FastAPI / Uvicorn\nHTTP 路由与请求检查]
+    P[Pydantic 请求模型] --> H
+    W[Swagger / OpenAPI] --> H
+    L[标准库兼容服务器] --> C[backend/controller.py\n应用接口控制器]
+    H --> C
+    C --> S[backend/service.py\n当前用户与页面数据]
+    S --> A[backend/auth.py\n密码验证与随机凭据]
     S --> O[database/operations.py\n参数绑定与业务事务]
     S -->|范围条件 / 数量 / 分页查询| D[(SQLite\n16 表 / 3 视图)]
     O --> D
@@ -22,12 +26,14 @@ flowchart LR
 | `frontend/src/app.js` | 页面、表单、角色入口、筛选及分页状态，成功后重新读取相关摘要和页面 |
 | `frontend/src/i18n.js` | 英文/简体中文显示、既有示例目录翻译和英文搜索别名；语言设置仅存浏览器 |
 | `frontend/src/http-api.js` | 同源请求、JSON、Cookie、内存 CSRF 令牌与超时错误 |
-| `backend/server.py` | 路由、Host/Origin/请求头检查、JSON 限制、响应与静态资源允许列表 |
+| `backend/fastapi_app.py` / `schemas.py` | FastAPI 路由、Pydantic 结构验证、OpenAPI/Swagger、同源请求与响应 |
+| `backend/server.py` | 标准库兼容传输；MIME 与静态资源允许列表 |
+| `backend/controller.py` | 共享应用接口控制器及服务调用 |
 | `backend/service.py` | 输入字段允许列表、服务端身份、SQL 范围和筛选、分页及 camelCase 页面对象 |
 | `backend/insights.py` | SQL 个性推荐、临时成员关系与群体公平排序、授权分店经营聚合及窗口函数 |
 | `backend/auth.py` | PBKDF2 密码哈希、恒定时间比较和随机会话凭据 |
 | `backend/database.py` | 缺失数据库初始化、事务迁移与完整性检查 |
-| `database/operations.py` | 购买、核销、点评等核心业务操作和写入事务 |
+| `database/operations.py` | 购买、核销、点评、库存调整等核心业务操作和写入事务 |
 | SQL 表、索引、视图、触发器 | 键关系、库存约束、购买历史及核销记录的完整性 |
 
 每个 HTTP 请求使用独立数据库连接，连接启用外键并设定 5 秒 busy timeout。相关写操作以 `BEGIN IMMEDIATE` 开始；任何一步失败都回滚。SQLite 仍是单写者数据库，写锁等待失败会转换为可读的 `503 / DATABASE_BUSY`，不等于已证明大规模吞吐性能。

@@ -54,6 +54,23 @@ def require_user(connection, user_id):
         raise DatabaseRuleError('USER_NOT_FOUND', 'User does not exist')
 
 
+def adjust_coupon_stock(connection, user_id, coupon_id, stock, expected):
+    """Set unsold stock atomically; never change the number already sold."""
+    if type(stock) is not int or type(expected) is not int or not 0 <= stock <= 100000 or not 0 <= expected <= 100000:
+        raise DatabaseRuleError('INVALID_STOCK','Invalid stock')
+    with transaction(connection):
+        row=connection.execute('''SELECT c.available_stock FROM coupons c
+            JOIN store_staff ss ON ss.store_id=c.store_id
+            WHERE c.coupon_id=? AND ss.user_id=? AND ss.is_active=1 AND ss.role IN ('owner','manager')''',
+            (coupon_id,user_id)).fetchone()
+        if row is None:
+            raise DatabaseRuleError('FORBIDDEN','Stock management is restricted to branch owners/managers')
+        if row['available_stock']!=expected:
+            raise DatabaseRuleError('STOCK_CHANGED','Stock changed since display')
+        connection.execute('UPDATE coupons SET available_stock=?,total_stock=total_stock+? WHERE coupon_id=?',
+                           (stock,stock-expected,coupon_id))
+
+
 def purchase_coupon(connection, user_id, coupon_id, idempotency_key):
     """One unit/order. A retry key returns the same order without charging stock twice."""
     if not isinstance(idempotency_key, str) or not 1 <= len(idempotency_key.strip()) <= 128:
