@@ -89,6 +89,7 @@
     getOrders: function (query) { return request(listURL('/api/orders', query), 'GET'); },
     getMerchantOrders: function (query) { return request(listURL('/api/merchant/orders', query), 'GET'); },
     getMerchantAnalytics: function (query) { return request(listURL('/api/merchant/analytics', query), 'GET'); },
+    adjustCouponStock: function (id, stock, expectedStock) { return request('/api/merchant/coupons/' + encodeURIComponent(id) + '/stock', 'PATCH', {stock, expectedStock}); },
     getOrderStatus: function (order) { return order.status; },
     subscribe: function () { return function () {}; },
     login: function (input) { return request('/api/auth/login', 'POST', { email: input.email, password: input.password }); },

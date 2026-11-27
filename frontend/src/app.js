@@ -49,6 +49,7 @@
   let offset=0, page=emptyPage(12), sidebarFavorites=[], authorizedStores=[], detailStore=null, ownReview=null;
   let loading=false, pageError='', loadSerial=0, bootstrapSerial=0, modalSerial=0, searchTimer;
   let groupMembers=[{budget:'120',category:''},{budget:'120',category:''}], groupDistrict='', groupQuery=null;
+  const resetGroup=()=>{groupMembers=[{budget:'120',category:''},{budget:'120',category:''}];groupDistrict='';groupQuery=null;};
   let analyticsDays='7', merchantAnalytics=null;
   const storeOf = id => stores.get(id);
   const couponOf = id => coupons.get(id);
@@ -74,7 +75,7 @@
   }
   function navigate(to) {
     clearTimeout(searchTimer); loadSerial++; modalSerial++;
-    if(location.hash===`#/${to}`)readRoute();else location.hash=`/${to}`;
+    if(location.hash===`#/${to}`)readRoute();else location.hash=`#/${to}`;
   }
   function readRoute() {
     ++modalSerial;
@@ -115,6 +116,10 @@
     if(!a||loading||pageError)return '';
     const dates=new Map(a.ratingTrend.map(r=>[r.day,r]));
     return `<section class="panel analytics-panel"><div class="analytics-split"><section><h3>授权分店销量排行</h3>${a.branches.map(b=>`<div class="ledger-item"><div><strong>#${b.rank} ${esc(b.name)}</strong><small>${b.sold} 张 · ${money(b.gross)}</small></div>${b.id===a.storeId?'<span class="tag">当前门店</span>':''}</div>`).join('')}</section><section><h3>库存补充建议</h3><p class="small muted">按所选期间平均日销量估算未来 3 天需求；仅作演示参考。</p>${a.offers.filter(o=>o.active).map(o=>`<div class="ledger-item"><div><strong>${esc(o.title)}</strong><small>当前库存 ${o.stock} 张</small></div><span class="${o.suggestedRestock?'stock-alert':'small muted'}">${o.suggestedRestock?`建议补 ${o.suggestedRestock} 张`:'库存充足'}</span></div>`).join('')||'<p class="small muted">没有有效优惠。</p>'}</section></div><details class="analytics-data"><summary>查看每日销售、累计销售与点评明细</summary><div class="analytics-table-wrap"><table class="analytics-table"><thead><tr><th>日期</th><th>销量</th><th>模拟销售额</th><th>累计销售额</th><th>当天发表点评均分</th></tr></thead><tbody>${a.trend.map(d=>{const r=dates.get(d.day);return `<tr><td>${esc(d.day)}</td><td>${d.sold}</td><td>${money(d.gross)}</td><td>${money(d.cumulative)}</td><td>${r?`${r.average} (${r.count} 条)`:'—'}</td></tr>`;}).join('')}</tbody></table></div><p class="small muted">点评按创建日统计当前评分；已编辑或删除的点评不会保留历史版本。</p></details></section>`;
+  }
+  function inventoryPanel(a) {
+    if(!a||loading||pageError||!a.canAdjustStock)return '';
+    return `<section class="panel analytics-panel"><div class="panel-heading"><h2>优惠券库存管理</h2><small>仅门店所有者和经理可调整</small></div><p class="small muted">调整尚未售出的券数，不影响已售订单和核销记录。</p>${a.offers.map(o=>`<div class="ledger-item"><div><strong>${esc(o.title)}</strong><small>当前库存 ${o.stock} 张</small></div><button class="btn outline" data-action="adjust-stock" data-id="${esc(o.id)}">调整库存</button></div>`).join('')}</section>`;
   }
   function discover() {
     const featured=state.featuredStore, c=state.featuredCoupon;
@@ -160,7 +165,7 @@
     const focus=document.activeElement, focusID=focus?.id;
     const position=focusID==='search'?{start:focus.selectionStart,end:focus.selectionEnd}:null;
     const redeemValue=$('#redeem-code')?.value;
-    renderChrome(); $('#main').innerHTML=t(({discover,group,deals,wallet,profile,merchant:()=>merchant()+(isMerchant()?analyticsPanel(merchantAnalytics)+analyticsDetails(merchantAnalytics):''),store:detail}[route]||discover)());
+    renderChrome(); $('#main').innerHTML=t(({discover,group,deals,wallet,profile,merchant:()=>merchant()+(isMerchant()?inventoryPanel(merchantAnalytics)+analyticsPanel(merchantAnalytics)+analyticsDetails(merchantAnalytics):''),store:detail}[route]||discover)());
     if(pending&&$('#merchant-store'))$('#merchant-store').disabled=true;
     if(route==='merchant'&&redeemValue!==undefined&&$('#redeem-code'))$('#redeem-code').value=redeemValue;
     if(focusID) {
@@ -226,7 +231,7 @@
     clearTimeout(searchTimer); ++loadSerial;
     const serial=++bootstrapSerial, next=await API.getState();
     if(serial!==bootstrapSerial)return;
-    if(next.user?.id!==state?.user?.id){++modalSerial;merchantStore='';redemptionResult=null;offset=0;}
+    if(next.user?.id!==state?.user?.id){++modalSerial;merchantStore='';redemptionResult=null;offset=0;resetGroup();}
     state=next; stores.clear();coupons.clear();reviews.clear();authorizedStores=[];sidebarFavorites=[];merchantAnalytics=null;
     detailStore=null;ownReview=null;
     rememberStore(next.featuredStore); if(next.featuredCoupon)remember(coupons,next.featuredCoupon);
@@ -238,7 +243,7 @@
     state={...state,user:null,csrfToken:null,summary:{favorites:0,reviews:0,orders:{all:0,unused:0,redeemed:0,expired:0}}};
     if(state.featuredStore)state.featuredStore={...state.featuredStore,isFavorite:false};
     stores.clear();coupons.clear();reviews.clear();authorizedStores=[];sidebarFavorites=[];merchantAnalytics=null;
-    merchantStore='';redemptionResult=null;ownReview=null;detailStore=null;offset=0;
+    merchantStore='';redemptionResult=null;ownReview=null;detailStore=null;offset=0;resetGroup();
     page=emptyPage(12);pageError='';loading=false;render();
     try {
       const next=await API.getState();
@@ -307,6 +312,10 @@
       else if(a==='nav')navigate(id);
       else if(a==='analytics-jump')$('.analytics-panel')?.scrollIntoView({behavior:'smooth',block:'start'});
       else if(a==='merchant-top')window.scrollTo({top:0,behavior:'smooth'});
+      else if(a==='adjust-stock'&&!pending&&merchantAnalytics?.canAdjustStock){
+        const o=merchantAnalytics.offers.find(item=>item.id===id);
+        if(o)showModal('调整库存',`<p>${esc(o.title)} · 当前库存 ${o.stock} 张</p><form id="stock-form" data-coupon="${esc(o.id)}" data-stock="${o.stock}"><label for="stock-value">新的可售库存</label><input id="stock-value" class="field" name="stock" type="number" min="0" max="100000" step="1" required value="${o.stock}"><div class="form-error" role="alert"></div><button type="submit" class="btn primary full">保存库存</button></form>`);
+      }
       else if(a==='group-add'&&groupMembers.length<8){groupMembers.push({budget:'120',category:''});render();}
       else if(a==='group-remove'&&groupMembers.length>2){groupMembers.splice(Number(id),1);render();}
       else if(a==='store'){reviewSort='new';reviewRating='all';navigate(`store/${id}`);}
@@ -372,7 +381,7 @@
       groupQuery={district:groupDistrict,members:groupMembers.map(m=>({budget:Number(m.budget),category:m.category}))};
       offset=0;await loadRoute();return;
     }
-    if(!['login-form','register-form','profile-form','review-form','purchase-form','redeem-form','delete-form'].includes(f.id))return;
+    if(!['login-form','register-form','profile-form','review-form','purchase-form','redeem-form','delete-form','stock-form'].includes(f.id))return;
     event.preventDefault();if(pending)return;pending=true;
     const err=$('.form-error',f);if(err)err.textContent='';
     const submit=$('[type="submit"]',f);submit.disabled=true;
@@ -392,6 +401,11 @@
         message='优惠券已核销';
       }
       if(f.id==='delete-form'){await API.deleteReview(f.dataset.review);message='点评已删除';}
+      if(f.id==='stock-form'){
+        const stock=String(values.get('stock')??'');
+        if(!/^\d+$/.test(stock)||Number(stock)>100000)throw new Error('库存必须为 0–100000 的整数。');
+        await API.adjustCouponStock(f.dataset.coupon,Number(stock),Number(f.dataset.stock));message='库存已更新';
+      }
       // Change the route before refresh to fetch only the destination page.
       if(f.id==='purchase-form'){route='wallet';currentStore=null;}
       if(f.id==='login-form'||f.id==='register-form'){route='profile';currentStore=null;}
@@ -414,7 +428,7 @@
     $('#main').innerHTML=t('<div class="loading" role="status">正在连接本地服务…</div>');
     try {
       if(!API)throw new Error('页面接口未能加载，请通过 LocalDeal 启动器打开应用。');
-      const next=await API.getState();state=next;
+      const next=await API.getState();if(next.user?.id!==state?.user?.id)resetGroup();state=next;
       rememberStore(next.featuredStore);if(next.featuredCoupon)remember(coupons,next.featuredCoupon);
       readRoute();
     } catch(problem) {
