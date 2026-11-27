@@ -9,7 +9,6 @@ from http.cookies import CookieError, SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import hmac
 import json
-import mimetypes
 from pathlib import Path
 import re
 import socket
@@ -27,6 +26,13 @@ MAX_BODY = 16384
 FRONTEND = ROOT / 'frontend'
 STATIC_PATHS = {'/','/index.html','/styles.css','/src/app.js','/src/http-api.js','/src/i18n.js',
                 '/assets/favicon.svg','/assets/burger.jpg','/assets/dumplings.jpg','/assets/coffee.jpg'}
+STATIC_CONTENT_TYPES = {
+    '.html': 'text/html; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.js': 'text/javascript; charset=utf-8',
+    '.svg': 'image/svg+xml; charset=utf-8',
+    '.jpg': 'image/jpeg',
+}
 
 
 class LoginLimiter:
@@ -161,9 +167,8 @@ class Handler(BaseHTTPRequestHandler):
         if not target.is_relative_to(FRONTEND.resolve()) or not target.is_file():
             raise service.APIError(404,'NOT_FOUND','没有找到这个资源。')
         data = target.read_bytes()
-        content_type = mimetypes.guess_type(target.name)[0] or 'application/octet-stream'
-        if target.suffix in {'.html','.css','.js','.svg'}:
-            content_type += '; charset=utf-8'
+        # Use explicit MIME types rather than OS-specific registry mappings.
+        content_type = STATIC_CONTENT_TYPES.get(target.suffix.lower(), 'application/octet-stream')
         self.send_response(200)
         self.send_header('Content-Type',content_type)
         self.send_header('Content-Length',str(len(data)))
