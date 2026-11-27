@@ -14,10 +14,10 @@ LocalDeal 是一个可在电脑上运行的餐饮门店、点评与数字优惠�
 
 默认使用英文界面。右上角语言下拉框可以选择 **English / 简体中文**，无需重新登录；刷新后自动保留语言选择。示例门店、菜单、优惠、提示、推荐与看板全部按选择显示，用户填写的昵称和点评保留原文。常用英文搜索词（例如 coffee、burger、Central）可转换为相应的数据库关键词。
 
-需要 **Python 3.10 或以上**，无需安装第三方 Python 包、Node.js 或前端构建工具。
+需要 **Python 3.10 或以上**。推荐安装 FastAPI、Pydantic 与 Uvicorn（无需 Node.js 或前端构建工具）。如果暂时无法安装依赖，也可以使用原兼容后端，全部餐饮业务功能仍能正常运行。
 
 1. 解压源码包；也可从 [GitHub 仓库](https://github.com/fljt-ai/localdeal-5003) 下载。双语言升级版包含 `frontend/src/i18n.js`。保持 `frontend`、`backend`、`database` 等文件夹在同一项目目录。
-2. 在 macOS 上双击项目根目录的 **`start.command`**，保持打开的终端窗口运行。首次启动等待终端显示启动地址。
+2. macOS 可用 `start.command`，Windows 可用 `start-windows.cmd`；若系统提示脚本不能直接打开，请按下面的命令行步骤启动。保持终端窗口运行，等待显示启动地址。
 3. 在浏览器打开 **[http://127.0.0.1:8787](http://127.0.0.1:8787)**。
 4. 使用完毕后，在终端按 **Control+C** 停止服务。
 
@@ -29,13 +29,18 @@ LocalDeal 是一个可在电脑上运行的餐饮门店、点评与数字优惠�
 python3 -B run.py
 ```
 
-推荐录制视频或组员体验时使用丰富示例模式：
+推荐录制视频或组员体验时使用新架构与丰富示例模式：
 
 ```sh
-python3 -B run.py --smart-demo
+python3 -m pip install -r requirements.txt
+python3 -B run.py --engine fastapi --smart-demo
 ```
 
-第一次运行创建独立的 `database/localdeal-smart.db`，包含 114 笔虚构订单和 78 条点评，可展示 7/30 日销售趋势及低库存提示。已存在的数据库不会重建，也不会修改普通启动的 `database/localdeal.db`。Windows 把 `python3` 换成 `py -3` 即可。
+第一次运行创建独立的 `database/localdeal-smart.db`，包含 18 家虚构门店、18 项优惠、114 笔订单和 126 条点评。已存在的数据库不会重建，也不会修改普通启动的 `database/localdeal.db`；如已使用旧丰富数据库，可加 `--db database/localdeal-smart-expanded.db` 创建新演示库。Windows 把 `python3` 换成 `py -3` 即可。FastAPI 启动后打开 [Swagger 接口文档](http://127.0.0.1:8787/docs)，无需连接外部 CDN。
+
+商户在工作台可以调整尚未售出的优惠券库存，只有授权门店的所有者和经理可操作；同时修改总发行库存以保留已销售数量。切换用户账号后聚餐筛选及结果自动清空。
+
+无法安装依赖时可以运行 `python3 -B run.py --engine legacy --smart-demo`；默认自动选择已安装的 FastAPI 或兼容后端。Docker Desktop 用户也可在项目根目录运行 `docker compose up --build`，本机访问同一地址，数据保留在命名卷。`docker compose down` 停止服务。
 
 也可克隆当前公开仓库，再在该目录执行启动命令：
 
@@ -54,9 +59,9 @@ python3 -B run.py
 | 角色 | 邮箱 | 可体验内容 |
 | --- | --- | --- |
 | 顾客 Alex | `alex@example.com` | 收藏、点评、自己的券包与模拟购买 |
-| Harbor Bites 商户 | `harbor.owner@example.com` | 中环、尖沙咀两家分店的订单与核销 |
-| Little Dumpling 商户 | `dumpling.owner@example.com` | 铜锣湾、中环两家分店的订单与核销 |
-| Daily Grind 商户 | `coffee.owner@example.com` | 尖沙咀、铜锣湾两家分店的订单与核销 |
+| Harbor Bites 商户 | `harbor.owner@example.com` | 授权门店订单、库存调整与核销 |
+| Little Dumpling 商户 | `dumpling.owner@example.com` | 授权门店订单、库存调整与核销 |
+| Daily Grind 商户 | `coffee.owner@example.com` | 授权门店订单、库存调整与核销 |
 
 也可注册独立顾客账号。昵称为 1–60 个字符，密码为 12–128 个字符；昵称可以在个人中心修改。新注册的顾客账号没有商户权限。
 
@@ -97,7 +102,7 @@ python3 -B -m unittest discover -s database/tests -v
 python3 -B -m unittest discover -s tests -v
 ```
 
-测试使用临时数据库，不修改应用当前保存的资料。2026-11-27 验证结果为 18 项核心数据库、29 项 HTTP 应用、1 项丰富演示数据生成及两个前端检查脚本通过。具体范围见 [智能功能设计](docs/SMART-FEATURES.md) 及 [应用验证记录](database/docs/VALIDATION.md)。
+测试使用临时数据库，不修改应用当前保存的资料。安装 `requirements-dev.txt` 后可额外运行 FastAPI 接口测试。验证内容及架构升级见 [架构升级](docs/ARCHITECTURE-UPGRADE.md)、[智能功能设计](docs/SMART-FEATURES.md) 及 [应用验证记录](database/docs/VALIDATION.md)。
 
 前端行为检查可选用 Node.js 18 或以上运行，无需安装 npm 包：
 
@@ -106,7 +111,7 @@ node frontend/tests/http-api.test.js
 node frontend/tests/app-state.test.js
 ```
 
-仓库包含 Python 3.10/3.14 与 Node 22 的 GitHub Actions 配置。2026-10-03，源码提交 [0fe0b27](https://github.com/fljt-ai/localdeal-5003/commit/0fe0b2781bda8a83fb6eed4a09afe9810fc895a4) 的首次 [Project checks #1](https://github.com/fljt-ai/localdeal-5003/actions/runs/37096568279) 已成功完成。该结果仅对应此提交；后续提交的实际结果以 [Actions 页面](https://github.com/fljt-ai/localdeal-5003/actions) 为准。
+仓库包含 Python 3.10/3.14 在 Ubuntu 和 Windows 上的测试以及 Node 22 的 GitHub Actions 配置。实际结果以 [Actions 页面](https://github.com/fljt-ai/localdeal-5003/actions) 上对应提交为准。
 
 发现页、优惠、点评、个人收藏、券包和商户订单均按页读取；搜索、地区、类别、评分与订单状态筛选由数据库处理。每页默认 12 家门店或 10 条点评/订单，页面显示完整总数，评分仍来自门店全部点评。初始化只读取摘要和推荐卡片，个人资料导出仍包含本人的全部记录。
 
@@ -116,4 +121,4 @@ node frontend/tests/app-state.test.js
 
 这是运行在本机回环地址的课程演示，已实现最小密码认证、服务端会话和门店权限检查，尚未实现邮箱验证、密码找回、真实支付及公开部署。Python 官方说明 `http.server` 不适合生产环境；本项目不把该服务器作为线上部署方案。[Python HTTP server 文档](https://docs.python.org/3/library/http.server.html)
 
-源码、结构说明和演示指南可用作分析参考。升级版已通过 18 项核心数据库、29 项 HTTP、1 项丰富演示数据生成及两个前端检查脚本，实际页面完成推荐、聚餐、经营分析和语言切换的操作核对。远程检查结果以 GitHub Actions 对应提交为准；演示视频、成员实际贡献与最终课程报告仍待完成。
+源码、结构说明和演示指南可用作分析参考。此次架构升级实测推荐、聚餐账号隔离、经营分析、库存增加与减少以及 Swagger 接口查询。远程检查结果以 GitHub Actions 对应提交为准；演示视频、成员实际贡献与最终课程报告仍待完成。

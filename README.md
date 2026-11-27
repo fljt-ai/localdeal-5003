@@ -6,7 +6,7 @@
 
 The GitHub repository was made public on 2026-11-26. The November upgrade adds explainable recommendations, group dining matching, merchant analytics, a transaction contention evaluation, and English / Simplified Chinese display; see [Smart features](docs/SMART-FEATURES.md).
 
-LocalDeal helps customers discover fictional Hong Kong restaurants, save favorites, share reviews and purchase simulated dining vouchers. Authorized store staff can inspect their branch orders and redeem vouchers. A vanilla JavaScript frontend connects to a Python HTTP backend and a persistent SQLite database.
+LocalDeal helps customers discover fictional Hong Kong restaurants, save favorites, share reviews and purchase simulated dining vouchers. Authorized store staff can inspect their branch orders and redeem vouchers; branch owners/managers can adjust unsold inventory. A vanilla JavaScript frontend connects to a layered FastAPI/Pydantic backend and a persistent SQLite database (a dependency-free compatibility server is also provided).
 
 ![LocalDeal discovery page with fictional demo data](docs/images/discovery.jpg)
 
@@ -23,6 +23,10 @@ Upgraded interface previews: [personalized ranking](docs/images/personalized-rec
 - Load bounded pages with complete totals; keep store ratings independent of the current review page.
 - Explain recommendations computed from personal favorites, positive reviews, purchases, public reputation and active discounts; use a public fallback for guests and new users.
 - Match 2–8 diners by a hard shared budget/region constraint and a worst-member-first preference ranking.
+- Reset group dining preferences and results when the signed-in identity changes or the session expires.
+- Adjust unsold voucher stock, preserving purchase/redemption history; reject stale stock updates.
+- Browse 18 fictional branches and 18 offers in a fresh rich demo with real pagination.
+- Inspect and call the API using offline Swagger UI and OpenAPI.
 - View branch-scoped 7/30-day simulated sales, coupon rankings, redemption outcomes, review summaries and stock replenishment advice in the merchant workspace.
 - Switch between English (default) and Simplified Chinese using the top-bar selector. The preference is stored in the browser; account data, orders, filters and user-authored reviews remain unchanged. The fictional catalogue is translated for display, with common English search aliases.
 
@@ -30,22 +34,27 @@ All restaurant details, accounts and transactions are fictional. Payments are si
 
 ## Quick start
 
-Use **Python 3.10 or later**. Running the app needs only Python's standard library; no frontend build step or package installation is required.
+Use **Python 3.10 or later**. Install the API dependencies once for the recommended FastAPI runtime; no frontend build step is required. For Python-only offline use, the compatibility server supports all business features except Swagger/OpenAPI.
 
 1. Download and extract the source package or the [public repository](https://github.com/fljt-ai/localdeal-5003). No GitHub sign-in is needed for public read access. The bilingual upgrade includes `frontend/src/i18n.js`.
 2. Open a terminal in the project root, beside `run.py`.
-3. Run:
+3. Run (macOS; on Windows replace `python3` with `py -3`):
 
 ```sh
-python3 -B run.py
+python3 -m pip install -r requirements.txt
+python3 -B run.py --engine fastapi --smart-demo
 ```
 
 4. Open [http://127.0.0.1:8787](http://127.0.0.1:8787) in a browser.
 5. Keep the terminal open. Press **Control+C** to stop the server.
 
-For the richer **smart-feature recording demo**, use `python3 -B run.py --smart-demo` instead. This initializes a separate `database/localdeal-smart.db` with fictional historical orders and ratings (114 orders and 78 reviews across the six stores at first launch), and preserves any existing file. If port 8787 is busy, append `--port 8788`. The original database remains intact.
+The **smart-feature recording demo** initializes a separate `database/localdeal-smart.db` (18 fictional branches, 18 offers, 114 orders and 126 reviews at first launch) and preserves any existing file. For a new demonstration without changing an older rich database, append `--db database/localdeal-smart-expanded.db`. Normal startup without `--smart-demo` keeps the original six-store seed. Open [Swagger UI](http://127.0.0.1:8787/docs) or [OpenAPI JSON](http://127.0.0.1:8787/openapi.json) with FastAPI; all Swagger assets are bundled locally.
 
-On Windows, use `py -3 -B run.py` if that is your Python launcher. On macOS, you can also launch `start.command`; if it lacks executable permission after extraction, use the terminal command above. Open the HTTP address to use the app; opening `frontend/index.html` directly does not connect to the backend.
+Without installing packages, run `python3 -B run.py --engine legacy --smart-demo` (Windows: `py -3 -B run.py --engine legacy --smart-demo`). Default `--engine auto` selects FastAPI if dependencies are installed, otherwise the compatibility server.
+
+Optional Docker Desktop: run `docker compose up --build`. The service is published on host loopback only; the named volume preserves the database. Use `docker compose down` to stop without removing the volume.
+
+On Windows, use `py -3 -B run.py --smart-demo` if that is your Python launcher, or `start-windows.cmd`. On macOS, `start.command` also starts the rich demo; if the OS blocks the downloaded script, use the terminal command above. Open the HTTP address to use the app; opening `frontend/index.html` directly does not connect to the backend.
 
 Use `python3 -B run.py --port 8788` if the default port is occupied. `--db /path/to/copy.db` selects a separate database, and `--verbose` logs HTTP requests. On systems where Python has no IANA time-zone data, install the `tzdata` package to provide the `Asia/Hong_Kong` time zone; see the [Python time-zone documentation](https://docs.python.org/3/library/zoneinfo.html#data-sources).
 
@@ -63,9 +72,9 @@ The public **fictional demo password** for these accounts is `LocalDealDemo!2026
 | Role | Email | Access |
 | --- | --- | --- |
 | Customer Alex | `alex@example.com` | Personal profile, reviews, favorites and wallet |
-| Harbor Bites staff | `harbor.owner@example.com` | Central and Tsim Sha Tsui branches |
-| Little Dumpling staff | `dumpling.owner@example.com` | Causeway Bay and Central branches |
-| Daily Grind staff | `coffee.owner@example.com` | Tsim Sha Tsui and Causeway Bay branches |
+| Harbor Bites owner | `harbor.owner@example.com` | Authorized Harbor Bites branches, inventory and redemption |
+| Little Dumpling owner | `dumpling.owner@example.com` | Authorized Little Dumpling branches, inventory and redemption |
+| Daily Grind owner | `coffee.owner@example.com` | Authorized Daily Grind branches, inventory and redemption |
 
 Newly registered accounts are customers. The [demo guide](docs/DEMO-GUIDE.md) describes purchasing a voucher as a customer and redeeming it with the corresponding merchant account.
 
@@ -114,9 +123,9 @@ node frontend/tests/http-api.test.js
 node frontend/tests/app-state.test.js
 ```
 
-The tests create temporary databases and preserve the running demo database. On 2026-11-27, **18 database tests, 29 HTTP tests, one rich-demo generator test and both frontend check scripts passed locally**, including recommendation personalization, group matching and analytics consistency. See the [smart-feature validation](docs/SMART-FEATURES.md), [application validation](database/docs/VALIDATION.md) and [frontend validation](frontend/docs/FRONTEND-CHECKS.md).
+The tests create temporary databases and preserve the running demo database. Install `requirements-dev.txt` to run the FastAPI contract tests. See the [architecture upgrade](docs/ARCHITECTURE-UPGRADE.md), [smart-feature validation](docs/SMART-FEATURES.md), [application validation](database/docs/VALIDATION.md) and [frontend validation](frontend/docs/FRONTEND-CHECKS.md).
 
-[GitHub Actions](.github/workflows/checks.yml) is configured for Python 3.10/3.14 and Node 22 on Ubuntu. On 2026-10-03, the initial [Project checks run #1](https://github.com/fljt-ai/localdeal-5003/actions/runs/37096568279) completed successfully for source commit [0fe0b27](https://github.com/fljt-ai/localdeal-5003/commit/0fe0b2781bda8a83fb6eed4a09afe9810fc895a4). This result applies to that commit; see [Actions](https://github.com/fljt-ai/localdeal-5003/actions) for later runs. The workflow follows GitHub's [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
+[GitHub Actions](.github/workflows/checks.yml) is configured for Python 3.10/3.14 on Ubuntu and Windows, and Node 22 on Ubuntu. See [Actions](https://github.com/fljt-ai/localdeal-5003/actions) for results of the corresponding published commit. The workflow follows GitHub's [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
 
 ## Evaluation
 
