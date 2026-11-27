@@ -138,6 +138,19 @@ function harness(initialHash='#/discover',person=user,overrides={},language=null
   assert.equal(match[1].members[0].budget,100);assert.equal(match[1].district,'central');
   assert.match(group.main,/2\/2 人类别匹配/);assert.match(group.main,/最低满意度 91/);
 
+  const switched=harness('#/group',user);await flush();
+  await switched.submit('group-form',{'budget-0':'99','category-0':'cat-coffee','budget-1':'250','category-1':'','district':'central'});await flush();
+  assert.match(switched.main,/最低满意度 91/);
+  await switched.click('nav','profile');await flush();
+  await switched.click('logout');await flush();
+  switched.api.login=async()=>switched.setBootstrap(bootstrap({...user,id:'u2',name:'Amy',email:'amy@example.com'}));
+  await switched.submit('login-form',{email:'amy@example.com',password:'example'});await flush();
+  await switched.click('nav','group');await flush();
+  assert.doesNotMatch(switched.main,/最低满意度 91|上一次提交的条件/);
+  assert.equal(switched.nodes.get('group-budget-0').value,'120');
+  assert.equal(switched.nodes.get('group-budget-1').value,'120');
+  assert.equal(switched.calls.filter(c=>c[0]==='group').length,1);
+
   const own={id:'own-hidden',storeId:'s1',userId:'u1',userName:'Alex',rating:5,comment:'My review outside this page',createdAt:'2026-10-03'};
   const detail=harness('#/store/s1',user,{getStoreReviews:async()=>({...paged([],40,10),ownReview:own})});
   await flush();
